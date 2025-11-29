@@ -50,13 +50,13 @@
 }
 
 .card-usuario {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, #4DAAA7 0%, #3F8F8B 100%);
     color: white;
     border: none;
 }
 
 .card-usuario:hover {
-    background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
+    background: linear-gradient(135deg, #3F8F8B 0%, #4DAAA7 100%);
 }
 
 .card-usuario p {
@@ -100,8 +100,8 @@
     justify-content: space-between;
     align-items: center;
     padding: 20px;
-    border-bottom: 2px solid #ff4500;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-bottom: 2px solid #4DAAA7;
+    background: linear-gradient(135deg, #4DAAA7 0%, #3F8F8B 100%);
     color: white;
     border-radius: 12px 12px 0 0;
 }
@@ -151,7 +151,7 @@
     align-items: center;
     margin-bottom: 15px;
     padding-bottom: 10px;
-    border-bottom: 2px solid #667eea;
+    border-bottom: 2px solid #4DAAA7;
 }
 
 .venta-header h4 {
@@ -220,7 +220,7 @@
 }
 
 .cantidad {
-    background: #667eea;
+    background: #3F8F8B;
     color: white;
     padding: 3px 8px;
     border-radius: 12px;
@@ -273,7 +273,7 @@
     position: absolute;
     bottom: 20px;
     right: 20px;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, #4DAAA7 0%, #3F8F8B 100%);
     border: none;
     border-radius: 50%;
     width: 50px;
@@ -282,14 +282,14 @@
     align-items: center;
     justify-content: center;
     cursor: pointer;
-    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+    box-shadow: 0 4px 12px rgba(77, 170, 167, 0.4);
     transition: all 0.3s ease;
 }
 
 .btn-descargar-pdf:hover {
     transform: scale(1.1);
-    box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
-    background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
+    box-shadow: 0 6px 20px rgba(77, 170, 167, 0.6);
+    background: linear-gradient(135deg, #3F8F8B 0%, #4DAAA7 100%);
 }
 
 .btn-descargar-pdf:active {

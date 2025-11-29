@@ -1,0 +1,247 @@
+.modal-editar-usuarios {
+    background: white;
+    border-radius: 12px;
+    max-width: 700px;
+    width: 90%;
+    max-height: 80vh;
+    overflow-y: auto;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+}
+
+.modal-header-usuarios {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px;
+    border-bottom: 2px solid #4DAAA7;
+    background: linear-gradient(135deg, #4DAAA7 0%, #3F8F8B 100%);
+    color: white;
+    border-radius: 12px 12px 0 0;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+}
+
+.modal-header-usuarios h3 {
+    margin: 0;
+    color: white;
+}
+
+.contenido-editar-usuarios {
+    padding: 25px;
+}
+
+.cargando {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 15px;
+    padding: 40px;
+}
+
+/* Lista de usuarios */
+.lista-usuarios {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.instruccion {
+    color: #666;
+    margin-bottom: 10px;
+    font-size: 14px;
+}
+
+.tarjeta-usuario {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px;
+    border: 2px solid #e0e0e0;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.tarjeta-usuario:hover {
+    border-color: #4DAAA7;
+    background: rgba(77, 170, 167, 0.05);
+    transform: translateX(5px);
+}
+
+.info-usuario h4 {
+    margin: 0 0 5px 0;
+    color: #333;
+}
+
+.info-usuario .email {
+    margin: 5px 0;
+    color: #666;
+    font-size: 13px;
+}
+
+.badge-rol {
+    display: inline-block;
+    padding: 4px 10px;
+    background: #e0e0e0;
+    border-radius: 12px;
+    font-size: 12px;
+    margin-top: 5px;
+}
+
+.icono-editar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Formulario de edición */
+.formulario-edicion {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.formulario-edicion h4 {
+    margin: 0;
+    color: #333;
+    font-size: 18px;
+}
+
+.email-usuario {
+    color: #666;
+    font-size: 14px;
+    margin: -10px 0 10px 0;
+}
+
+.campo-edicion {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.campo-edicion label {
+    font-weight: 600;
+    color: #333;
+    font-size: 14px;
+}
+
+.campo-edicion input {
+    padding: 12px;
+    border: 2px solid #ddd;
+    border-radius: 8px;
+    font-size: 14px;
+    transition: border-color 0.3s;
+}
+
+.campo-edicion input:focus {
+    outline: none;
+    border-color: #4DAAA7;
+}
+
+.error-mensaje {
+    color: #ff4500;
+    background: #fff3f3;
+    padding: 10px;
+    border-radius: 6px;
+    border-left: 4px solid #ff4500;
+    margin: 0;
+    font-size: 14px;
+}
+
+.aviso-password {
+    background: #fff8e1;
+    border: 2px solid #ffc107;
+    border-radius: 8px;
+    padding: 15px;
+    margin: 10px 0;
+}
+
+.aviso-password p {
+    margin: 5px 0;
+    color: #856404;
+    font-size: 13px;
+    line-height: 1.5;
+}
+
+.aviso-password strong {
+    color: #ff6b00;
+}
+
+.botones-edicion {
+    display: flex;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+.btn-cancelar-edicion,
+.btn-eliminar-usuario,
+.btn-guardar-edicion {
+    flex: 1;
+    padding: 12px;
+    border: none;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.btn-cancelar-edicion {
+    background: #e0e0e0;
+    color: #333;
+}
+
+.btn-cancelar-edicion:hover:not(:disabled) {
+    background: #d0d0d0;
+}
+
+.btn-eliminar-usuario {
+    background: #ff4500;
+    color: white;
+}
+
+.btn-eliminar-usuario:hover:not(:disabled) {
+    background: #ff3000;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(255, 69, 0, 0.4);
+}
+
+.btn-guardar-edicion {
+    background: linear-gradient(135deg, #4DAAA7 0%, #3F8F8B 100%);
+    color: white;
+}
+
+.btn-guardar-edicion:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(77, 170, 167, 0.4);
+}
+
+.btn-cancelar-edicion:disabled,
+.btn-eliminar-usuario:disabled,
+.btn-guardar-edicion:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+@media (max-width: 768px) {
+    .modal-editar-usuarios {
+        max-width: 90%;
+        max-height: 70vh;
+        margin: 15vh 0;
+    }
+
+    .contenido-editar-usuarios {
+        padding: 20px;
+    }
+
+    .tarjeta-usuario {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+    }
+
+    .icono-editar {
+        align-self: flex-end;
+    }
+}

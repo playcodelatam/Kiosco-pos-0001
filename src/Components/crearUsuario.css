@@ -1,0 +1,132 @@
+.modal-crear-usuario {
+    background: white;
+    border-radius: 12px;
+    max-width: 500px;
+    width: 90%;
+    max-height: 90vh;
+    overflow-y: auto;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+}
+
+.modal-header-usuario {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px;
+    border-bottom: 2px solid #4DAAA7;
+    background: linear-gradient(135deg, #4DAAA7 0%, #3F8F8B 100%);
+    color: white;
+    border-radius: 12px 12px 0 0;
+}
+
+.modal-header-usuario h3 {
+    margin: 0;
+    color: white;
+}
+
+.form-crear-usuario {
+    padding: 25px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.form-crear-usuario label {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    font-weight: 600;
+    color: #333;
+}
+
+.form-crear-usuario input {
+    padding: 12px;
+    border: 2px solid #ddd;
+    border-radius: 8px;
+    font-size: 14px;
+    transition: border-color 0.3s;
+}
+
+.form-crear-usuario input:focus {
+    outline: none;
+    border-color: #4DAAA7;
+}
+
+.input-password {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.input-password input {
+    flex: 1;
+    padding-right: 45px;
+}
+
+.btn-toggle-password {
+    position: absolute;
+    right: 10px;
+    background: none;
+    border: none;
+    font-size: 20px;
+    cursor: pointer;
+    padding: 5px;
+}
+
+.text-error {
+    color: #ff4500;
+    font-size: 12px;
+    margin: 5px 0 0 0;
+    font-weight: normal;
+}
+
+.botones-form {
+    display: flex;
+    gap: 15px;
+    margin-top: 10px;
+}
+
+.btn-cancelar,
+.btn-crear {
+    flex: 1;
+    padding: 12px;
+    border: none;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.btn-cancelar {
+    background: #e0e0e0;
+    color: #333;
+}
+
+.btn-cancelar:hover {
+    background: #d0d0d0;
+}
+
+.btn-crear {
+    background: linear-gradient(135deg, #4DAAA7 0%, #3F8F8B 100%);
+    color: white;
+}
+
+.btn-crear:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(77, 170, 167, 0.4);
+}
+
+.btn-crear:active {
+    transform: translateY(0);
+}
+
+@media (max-width: 768px) {
+    .modal-crear-usuario {
+        max-width: 95%;
+    }
+
+    .form-crear-usuario {
+        padding: 20px;
+    }
+}

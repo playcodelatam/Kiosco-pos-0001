@@ -1,9 +1,10 @@
-/* Colores recomendados */
+/* Paleta de colores */
 :root {
-  --primary: #006749;   
-  --secondary: #27ae60; 
+  --primary: #4DAAA7;   
+  --secondary: #3F8F8B; 
+  --dark: #333333;
   --background: #f5f5f5;
-  --text: #222;
+  --text: #333333;
   --footer: #555;
 }
 
@@ -74,10 +75,10 @@ nav{
     border-bottom: none; 
 }
 
-/* Efecto al pasar el ratón (Hover) - Estética limpia y verde suave */
+/* Efecto al pasar el ratón (Hover) */
 .menu ol li:hover {
-    background-color: #e8f5e9;
-    color: #2e7d32;
+    background-color: rgba(77, 170, 167, 0.1);
+    color: var(--secondary);
 }
 .btn-nav {
   width: 35px;
@@ -89,17 +90,18 @@ nav{
   background: white;
   padding: 8px;
   border: none;
-  background-color: black;
+  background-color: var(--secondary);
   color: white;
   border-radius: 5px;
   cursor: pointer;
   transition: .2s ease-in-out;
-  box-shadow: 2px 2px 4px black;
+  box-shadow: 2px 2px 4px rgba(51, 51, 51, 0.3);
 }
 
 .btn-nav:hover {
-  background-color: grey;
+  background-color: var(--primary);
   color: white;
+  transform: scale(1.05);
 }
 footer {
   text-align: center;

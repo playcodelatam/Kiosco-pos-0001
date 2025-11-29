@@ -6,6 +6,8 @@ import Caja from './Caja';
 import EditProducto from './EditProducto';
 import ProdMasVendido from './ProdMasVendido.jsx';
 import VentasDiarias from './VentasDiarias.jsx';
+import CrearUsuario from './CrearUsuario.jsx';
+import EditarUsuarios from './EditarUsuarios.jsx';
 import './home.css';
 
 
@@ -35,6 +37,8 @@ const Home = ({ idDoc,
   const [ isOpenMenu, setIsOpenMenu ] = useState(true);
   const [ isProductoMasVendido, setIsProductoMasVendido ] = useState(false);
   const [ isVentasDiarias, setIsVentasDiarias ] = useState(false);
+  const [ isCrearUsuario, setIsCrearUsuario ] = useState(false);
+  const [ isEditarUsuarios, setIsEditarUsuarios ] = useState(false);
 
   const [ numero, setNumero ] = useState(0);
   const [ idCodigo, setIdCodigo ] = useState(null);
@@ -61,7 +65,7 @@ const Home = ({ idDoc,
           top: '10px',
           right: '10px',
           padding: '5px 10px',
-          background: rolUsuario === 'admin' ? '#ff6b6b' : '#4ecdc4',
+          background: rolUsuario === 'admin' ? '#3F8F8B' : '#4DAAA7',
           color: 'white',
           borderRadius: '5px',
           fontSize: '12px',
@@ -183,24 +187,29 @@ const Home = ({ idDoc,
               Productos mas vendidos
             </button>
           </li>
-          <li>
-            <button
-              type='button'
-              onClick={() => {
-                setIsOpenMenu(!isOpenMenu)
-                setIsVentasDiarias(false)
-                setIsProductoMasVendido(false)
-              }}
-            >Cambio de nombre de usuario</button></li>
-          <li>
-            <button
-              type='button'
-              onClick={() => {
-                setIsOpenMenu(!isOpenMenu)
-                setIsVentasDiarias(false)
-                setIsProductoMasVendido(false)             
-              }}
-            >Cambio de contraseña</button></li>
+          {/* Solo admin puede gestionar usuarios */}
+          {rolUsuario === 'admin' && (
+            <>
+              <li>
+                <button
+                  type='button'
+                  onClick={() => {
+                    setIsCrearUsuario(true)
+                    setIsOpenMenu(!isOpenMenu)
+                  }}
+                >Crear Usuario Vendedor</button>
+              </li>
+              <li>
+                <button
+                  type='button'
+                  onClick={() => {
+                    setIsEditarUsuarios(true)
+                    setIsOpenMenu(!isOpenMenu)
+                  }}
+                >Editar Usuarios</button>
+              </li>
+            </>
+          )}
         </ol>
       </section>
         <section>
@@ -283,8 +292,18 @@ const Home = ({ idDoc,
         </section>
       </main>
       <footer>
-        <p>HERNAN LUIS VEYRET</p>
+        <p>Kiosco App Version 2.0</p>
       </footer>
+      
+      {/* Modal para crear usuario (solo admin) */}
+      {isCrearUsuario && (
+        <CrearUsuario onCerrar={() => setIsCrearUsuario(false)} />
+      )}
+      
+      {/* Modal para editar usuarios (solo admin) */}
+      {isEditarUsuarios && (
+        <EditarUsuarios onCerrar={() => setIsEditarUsuarios(false)} />
+      )}
     </div>
   )
 };

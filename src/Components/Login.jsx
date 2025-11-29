@@ -1,10 +1,7 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef } from 'react';
 import { useForm } from 'react-hook-form';
-import { loginConMail, crearCuentaEmail, loginWhihtGoogle } from '../firebase/auth.js'
+import { loginConMail, crearCuentaEmail } from '../firebase/auth.js'
 import Loader from './Loader.jsx';
-import LoaderGoogle from './LoaderGoogle.jsx';
-import { auth } from '../firebase/config.js';
-import { onAuthStateChanged } from 'firebase/auth';
 import './login.css';
 const Login = ({
                 setUsuarioLogueado,
@@ -20,49 +17,9 @@ const Login = ({
    setValue,
    formState: { errors }  
  } = useForm()
-  const [ accion, setAccion ] = useState(false);
   const [ abrirCerrarOjos, setAbrirCerrarOjos ] = useState(false) 
   const [ errorMail, setErrorMail ] = useState('');
   const [ isLoader, setIsLoader ] = useState(false);
-  const [ isLoaderGoogle, setIsLoaderGoogle ] = useState(false)
-  
-  const refAsideIzq = useRef(null);
-  const refAsideDer = useRef(null);
-  
-const googleLogin = async () => {
-  setIsLoaderGoogle(true);
-  await loginWhihtGoogle();
-  setIsLoaderGoogle(false) 
-}
-const crearCuenta = async (data) => {
-  console.log('crear una cuenta');
-  console.log(data);
-
-  if (data.password !== data.repetirPassword) {
-    alert("Las contraseñas no coinciden.");
-    return; 
-  }
-
-  const dataUser = {
-    nombre: data.nombre,
-    correo: data.mail,
-    password: data.password
-  };
-
-  try {
-    const user = await crearCuentaEmail(dataUser);    
-    console.log('Usuario creado y logueado:', user);    
-  } catch (error) {
-    console.error('Error capturado en el componente:', error);
-    setErrorUsuario(error.code)
-    if (error.code === 'auth/email-already-in-use') {
-        setErrorMail('El correo ya existe.')
-    } else {
-      alert('Ocurrió un error al crear la cuenta. Intente de nuevo.');
-    }
-  }
-};
-
   const ingresar = async (data) => {
     //console.log(data)
     setIsLoader(true)
@@ -85,22 +42,11 @@ const crearCuenta = async (data) => {
         </div>
         <div className='aside-der'>
           <div className='contenedor-form-login'>
-            { accion ? <h2>Crear cuenta</h2> : <h2>Login</h2> }
+            <h2>Login</h2>
             <form
               className='form-login'
-              onSubmit={handleSubmit( accion ? crearCuenta : ingresar )}
+              onSubmit={handleSubmit(ingresar)}
             >
-              { 
-                accion && 
-                <input type='text' name='nombre' placeholder='Nombre...'
-                  {...register('nombre', {
-                    required: {
-                      value: true,
-                      message: 'Campo obligatorio'
-                    }
-                  }) }
-                /> 
-              }
               <input type="mail" name='mail' placeholder='Email...'
                 {...register('mail', {
                   required: {
@@ -153,72 +99,13 @@ const crearCuenta = async (data) => {
               </button>
               </span>
               { errors.password?.message && <p className='text-error'>{errors.password.message}</p>}
-                {
-                  accion && (
-                    <>
-                      <input
-                        style={{width:'80%'}}
-                        type={abrirCerrarOjos ? 'text': 'password'}
-                        placeholder='Repetir contraseña...'
-                        {...register("repetirPassword", {
-                          required: {
-                            value: true,
-                            message: "Campo obligatorio",
-                          },
-                        })}
-                      />
-                      {errors.repetirPassword?.message && (
-                        <p className="text-error">{errors.repetirPassword.message}</p>
-                      )}
-                    </>
-                  )
-                }              
+              
               <button 
                 type='submit'
                 className='btn-entrar'          
               >
-                { isLoader ? <Loader /> : accion ? 'CREAR' : 'ENTRAR' }
+                { isLoader ? <Loader /> : 'ENTRAR' }
               </button>
-              {
-                !accion &&
-                  <button
-                    type='button'
-                    title='Entrar con google'
-                    className='btn-google'
-                    onClick={googleLogin}
-                  > 
-                  {
-                    isLoaderGoogle ? <LoaderGoogle /> :
-                    <>
-                    <img 
-                    width="20" 
-                    height="20" 
-                    src="https://img.icons8.com/color/48/google-logo.png" 
-                    alt="google-logo"
-                    />
-                    Entrar con Google
-                    </>
-                  }
-                  </button>
-              }
-             
-              {
-                !accion
-                ?
-                <button
-                  type='button'
-                  className='btn-crear-cuanta'
-                  onClick={() => setAccion(true)}
-                   >¿No tenes cuenta?</button>
-                :
-                <button
-                  type='button'
-                  className='btn-crear-cuanta'
-                  onClick={() => setAccion(false)}
-                >
-                  Volver
-                </button>
-              }
             </form>        
           </div>
         </div>
