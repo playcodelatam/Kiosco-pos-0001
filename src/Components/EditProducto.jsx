@@ -245,6 +245,7 @@ return (
           <input
           type="file"
           accept="image/*"
+          capture="environment"
           {...register('img', {
             required: {
               value: false,

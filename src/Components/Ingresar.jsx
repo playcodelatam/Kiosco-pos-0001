@@ -230,6 +230,7 @@ return (
           <input
           type="file"
           accept="image/*"
+          capture="environment"
           onChange={(e) => setArchivoOriginal(e.target.files[0])}
         />
         </label>
