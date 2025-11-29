@@ -85,12 +85,19 @@ const VentasDiarias = ({
     
     // Recorrer cada venta
     detalle.ventas.forEach((venta, idx) => {
+      // Convertir timestamp a hora
+      const fechaVenta = new Date(venta.id);
+      const hora = fechaVenta.getHours().toString().padStart(2, '0');
+      const minutos = fechaVenta.getMinutes().toString().padStart(2, '0');
+      const horario = `${hora}:${minutos}`;
+      
       // Encabezado de venta
       doc.setFontSize(11);
       doc.setFont(undefined, 'bold');
       doc.text(`Venta #${idx + 1}`, 14, yPosition);
       doc.setFont(undefined, 'normal');
-      doc.text(`Pago: ${venta.mtPago || 'Efectivo'}`, 60, yPosition);
+      doc.text(`Hora: ${horario}`, 50, yPosition);
+      doc.text(`Pago: ${venta.mtPago || 'Efectivo'}`, 90, yPosition);
       
       yPosition += 7;
       
