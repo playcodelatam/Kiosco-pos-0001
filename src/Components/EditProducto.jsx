@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
-import { actualizarProductos } from '../firebase/auth.js'
+import { actualizarProductoCatalogo } from '../firebase/auth.js'
+import { convertirImagenABase64 } from '../firebase/storage.js';
 
 import './ingresar.css'
 import Loader from './Loader.jsx';
@@ -10,102 +11,50 @@ const EditProducto = ({ productos,
                         setIdCodigo,
                         setIsLista,
                         setProductos,
-                        idDoc
+                        idDoc,
+                        rolUsuario
                       }) => { 
-const [ archivoOriginal, setArchivoOriginal] = useState(null);
-const [ nuevaUrl, setNuevaUrl ] = useState(null)
-const [ productoViejo, setProductoViejo ] = useState(null);
 const [ isPublicId, setIsPublicId ] = useState(null);
 const [ isLoader, setIsLoader ] = useState(false);
-
-useEffect(() => {
-  if(idCodigo){
-    const filtro = productos.find(item => item.codigo === idCodigo);
-    setArchivoOriginal(filtro.img)
-    /*
-    setValue('codigo', filtro.codigo )
-    setValue('descripcion', filtro.descripcion)
-    setValue('tamano', filtro.tamano)
-    setValue('precio', filtro.precio)
-    setValue('precioOff', filtro.precioOff)
-    setValue('cantidadOferta', filtro.cantidadOferta)
-    setValue('stock', filtro.stock)
-    */
-
-   // resetea todos los campos u como los nombres de las propiedades son iguales
-   // a los campos de register se agregan automaticamente con reset.
-  if (filtro) {
-    reset(filtro);
-  }
-  }
-},[idCodigo]);
+const [ imagenActual, setImagenActual ] = useState(null);
 
 const {
   register,
   reset,
   handleSubmit,
-  setValue,
   formState: { errors }  
 } = useForm()
 
-  const convertirAWebP = (file) => {
-    return new Promise((resolve) => {
-      const img = new Image();
-      const reader = new FileReader();
-
-      reader.onload = (e) => {
-        img.src = e.target.result;
-      };
-
-      img.onload = () => {
-        const canvas = document.createElement("canvas");
-        canvas.width = img.width;
-        canvas.height = img.height;
-        const ctx = canvas.getContext("2d");
-        ctx.drawImage(img, 0, 0);
-        canvas.toBlob(
-          (blob) => {
-            resolve(blob);
-          },
-          "image/webp",
-          0.8 // calidad
-        );
-      };
-
-      reader.readAsDataURL(file);
-    });
-  };
-
-const subirACloudinary = async (webpBlob, originalName) => {
-    // Reemplazar la extensión por .webp
-    const baseName = originalName.split(".").slice(0, -1).join(".");
-    const webpFileName = `${baseName}.webp`;
-
-    const formData = new FormData();
-    formData.append("file", webpBlob, webpFileName);
-    formData.append("upload_preset", "carrito_upload");
-    formData.append("folder", `kioscos/${idDoc}`);
-
-    const res = await fetch(
-      "https://api.cloudinary.com/v1_1/dujru85ae/image/upload",
-      {
-        method: "POST",
-        body: formData,
-      }
-    );
-
-    const data = await res.json();
-
-    if (data.secure_url) {
-      setIsPublicId(data.public_id)
-      return data.secure_url;
+useEffect(() => {
+  if(idCodigo && productos.length > 0){
+    console.log('Buscando producto con código:', idCodigo);
+    const filtro = productos.find(item => item.codigo === idCodigo);
+    console.log('Producto encontrado:', filtro);
+    
+    if (filtro) {
+      // Guardar la imagen actual
+      setImagenActual(filtro.img);
+      
+      // Resetear todos los campos EXCEPTO la imagen
+      const { img, id, ...datosParaForm } = filtro;
+      reset(datosParaForm);
     } else {
-      console.error("Error al subir:", data);
-      return null;
+      console.error('No se encontró el producto con código:', idCodigo);
     }
-  };
+  }
+},[idCodigo, productos, reset]);
+
+// Funciones de Cloudinary removidas - ahora se usa Firebase Storage
 const cargarProducto = async (data) => {
     setIsLoader(true)
+    
+    // Solo admin puede editar productos
+    if (rolUsuario !== 'admin') {
+      alert('Solo el administrador puede editar productos');
+      setIsLoader(false);
+      return;
+    }
+    
     let productoEditado = { ...data }; // 1. Inicialización de productoEditado
     
     // 2. DETERMINAR SI SE SELECCIONÓ UN ARCHIVO NUEVO
@@ -120,51 +69,67 @@ const cargarProducto = async (data) => {
     if (isNewFileSelected) {
         const archivoSeleccionado = inputImgValue[0];
         try {
-            // Esto solo se ejecuta si sabemos que 'archivoSeleccionado' es un objeto File
-            const webpBlob = await convertirAWebP(archivoSeleccionado); 
-            const urlWebP = await subirACloudinary(webpBlob, archivoSeleccionado.name);
+            console.log('Convirtiendo nueva imagen a Base64...');
+            const imagenBase64 = await convertirImagenABase64(archivoSeleccionado);
             
-            // Reemplaza el objeto FileList por la URL final.
-            productoEditado.img = urlWebP; 
+            // Reemplaza el objeto FileList por el Base64.
+            productoEditado.img = imagenBase64; 
+            console.log('Imagen actualizada');
             
         } catch (error) {
-            console.error("Fallo la subida de imagen:", error);
-            // Si la subida falla, aborta todo el proceso
+            console.error("Fallo al procesar imagen:", error);
+            alert('Error al procesar la imagen: ' + error.message);
+            setIsLoader(false);
             return; 
         }
+    } else {
+        // Si no se seleccionó nueva imagen, usar la imagen actual
+        productoEditado.img = imagenActual;
+        console.log('Manteniendo imagen actual');
     } 
     
-    // 4. Si NO se seleccionó un archivo nuevo (else):
-    // 'productoEditado.img' ya contiene la URL anterior (string) gracias al 'reset(filtro)', 
-    // por lo que simplemente se mantiene ese valor y NO se llama a la lógica de subida.
-    
-    // 5. Limpieza de campos (Lógica de null/''/'0')
+    // 4. Limpieza de campos (Lógica de null/''/'0')
     Object.keys(productoEditado).forEach(key => {
         if (productoEditado[key] === '' || productoEditado[key] === '0') {
             productoEditado[key] = null;
         }
     });
 
-    // 6. Clonar y Actualizar el array local
-    const nuevosProductos = productos.map(item =>
-        item.codigo === idCodigo ? productoEditado : item
-    );
+    // 5. Encontrar el producto en el catálogo para obtener su ID
+    const productoOriginal = productos.find(item => item.codigo === idCodigo);
+    if (!productoOriginal || !productoOriginal.id) {
+        console.error("No se encontró el ID del producto");
+        setIsLoader(false);
+        return;
+    }
 
-    // 7. LLAMAR A FIREBASE
+    // 6. ACTUALIZAR EN FIREBASE (catálogo global)
     try {
-        await actualizarProductos(idDoc, nuevosProductos); 
-        //console.log("Firestore actualizado con éxito.");
+        // Remover el id del objeto antes de actualizar
+        const { id: _id, ...datosActualizados } = productoEditado;
+        await actualizarProductoCatalogo(productoOriginal.id, datosActualizados); 
     } catch (error) {
         console.error("Fallo la actualización de Firestore:", error);
     }
 
-    // 8. Actualización del estado local y limpieza de UI
+    // 7. Actualización del estado local y limpieza de UI
     setIsLoader(false)
-    setProductos(nuevosProductos); 
     setIdCodigo(null);
     setIsEditarProducto(false);
     setIsLista(true);
 };
+// Si no hay productos o no hay idCodigo, mostrar mensaje
+if (!idCodigo || productos.length === 0) {
+  return (
+    <div className='contenedor-ingresar'>
+      <div className='titulo-ingresar'>
+        <h3>Editar Productos</h3>
+      </div>
+      <p>Cargando producto...</p>
+    </div>
+  );
+}
+
 return (
     <div className='contenedor-ingresar'>
       <div className='titulo-ingresar'>
@@ -267,6 +232,16 @@ return (
         { errors.stock?.message && <p className='text-error'>{errors.stock.message}</p>}
 
         <label>Imagen
+          {imagenActual && (
+            <div style={{marginBottom: '10px'}}>
+              <p style={{fontSize: '12px', color: '#666'}}>Imagen actual:</p>
+              <img 
+                src={imagenActual} 
+                alt="Producto actual" 
+                style={{maxWidth: '200px', maxHeight: '200px', objectFit: 'contain', border: '1px solid #ddd', borderRadius: '4px'}}
+              />
+            </div>
+          )}
           <input
           type="file"
           accept="image/*"
@@ -277,6 +252,9 @@ return (
             }
           })}
         />
+        <p style={{fontSize: '12px', color: '#666', marginTop: '5px'}}>
+          Deja vacío para mantener la imagen actual
+        </p>
         </label>
         <button
           type='submit'

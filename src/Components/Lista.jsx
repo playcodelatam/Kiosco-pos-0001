@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { actualizarProductos } from '../firebase/auth.js'
+import { eliminarProductoCatalogo } from '../firebase/auth.js'
 import Lector from './Lector';
 import Item from './Item';
 import './lista.css';
@@ -18,7 +18,8 @@ const Lista = ({
                 setValorCodigo,
                 idDoc,
                 isLoaderGeneral,
-                setIsLoaderGeneral
+                setIsLoaderGeneral,
+                rolUsuario
               }) => {
 const [ codigo, setCodigo ] = useState(null);
 const [ search, setSearch ] = useState([])
@@ -27,11 +28,22 @@ useEffect(() => {
   setNumero(null)
 },[])
 
-const eliminarProducto = (e) => {
-  const filtro = productos.filter(item => item.codigo !== e)  
-  if(filtro){
-    actualizarProductos(idDoc, filtro)
-    setProductos(filtro)
+const eliminarProducto = async (codigoProducto) => {
+  // Solo admin puede eliminar productos
+  if (rolUsuario !== 'admin') {
+    alert('Solo el administrador puede eliminar productos');
+    return;
+  }
+  
+  // Encontrar el producto por código para obtener su ID
+  const producto = productos.find(item => item.codigo === codigoProducto);
+  if (producto && producto.id) {
+    try {
+      await eliminarProductoCatalogo(producto.id);
+    } catch (error) {
+      console.error('Error al eliminar producto:', error);
+      alert('Error al eliminar el producto');
+    }
   }
 }
 
@@ -103,6 +115,7 @@ return (
               setIsEditarProducto={setIsEditarProducto}
               setIsLista={setIsLista}
               setIdCodigo={setIdCodigo}
+              rolUsuario={rolUsuario}
               />
           )) 
           :
@@ -115,6 +128,7 @@ return (
               setIsEditarProducto={setIsEditarProducto}
               setIsLista={setIsLista}
               setIdCodigo={setIdCodigo}
+              rolUsuario={rolUsuario}
               />
           ))
           :

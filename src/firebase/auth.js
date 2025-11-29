@@ -28,6 +28,51 @@ import { auth, db } from "./config.js";
 
 const provider = new GoogleAuthProvider();
 
+// Inicializar usuario admin por defecto
+export const inicializarAdmin = async () => {
+  try {
+    // Primero intentar crear el usuario en Authentication
+    let adminUID = null;
+    
+    try {
+      const userCredential = await createUserWithEmailAndPassword(auth, 'admin@kiosko.com', 'pos1982*');
+      adminUID = userCredential.user.uid;
+      await updateProfile(userCredential.user, { displayName: 'Administrador' });
+      console.log('Usuario admin creado en Authentication');
+    } catch (authError) {
+      if (authError.code === 'auth/email-already-in-use') {
+        // El usuario ya existe, obtener su UID
+        console.log('Usuario admin ya existe en Authentication');
+        // Necesitamos hacer login temporal para obtener el UID
+        const tempLogin = await signInWithEmailAndPassword(auth, 'admin@kiosko.com', 'pos1982*');
+        adminUID = tempLogin.user.uid;
+        await signOut(auth); // Cerrar sesión temporal
+      } else {
+        throw authError;
+      }
+    }
+    
+    // Crear documento en kioscos para que pueda registrar ventas
+    if (adminUID) {
+      const adminKioscoRef = doc(db, 'kioscos', adminUID);
+      const kioscoSnap = await getDoc(adminKioscoRef);
+      
+      if (!kioscoSnap.exists()) {
+        await setDoc(adminKioscoRef, {
+          nombre_kiosco: 'Administrador',
+          rol: 'admin',
+          fecha_creacion: new Date(),
+          ventas: {}
+        });
+        console.log('Documento de kiosco admin creado');
+      }
+    }
+    
+  } catch (error) {
+    console.error('Error al inicializar admin:', error);
+  }
+};
+
 export const loginWhihtGoogle = async () => {
   try {
     // 1. INICIAR SESIÓN CON GOOGLE
@@ -47,7 +92,7 @@ export const loginWhihtGoogle = async () => {
       await setDoc(userDocRef, {
         nombre_kiosco: user.displayName || 'Mi Kiosco Google', 
         fecha_creacion: new Date(),
-        productos: [], 
+        rol: 'user',  // Usuario normal
         ventas: [],
       });      
     } else {
@@ -65,13 +110,24 @@ export const loginWhihtGoogle = async () => {
 export const loginConMail = async(dataUser) => {
   try {
     const userLogin = await signInWithEmailAndPassword(auth, dataUser.correo, dataUser.password);
-    //console.log(userLogin.user)
-    //console.log(userLogin.user.displayName)
-    return userLogin.user
+    const user = userLogin.user;
+    
+    // Obtener el rol del usuario
+    let rol = 'user';
+    if (dataUser.correo === 'admin@kiosko.com') {
+      rol = 'admin';
+    } else {
+      const userDocRef = doc(db, 'kioscos', user.uid);
+      const docSnap = await getDoc(userDocRef);
+      if (docSnap.exists()) {
+        rol = docSnap.data().rol || 'user';
+      }
+    }
+    
+    return { ...user, rol };
   } catch (error) {
-    //console.log(error.code)
     return { ok: false, error: error.code }  
-}
+  }
 }
 
 // Cerrar sesion
@@ -94,18 +150,13 @@ export const crearCuentaEmail = async (datosUser) => {
     // Ruta: /kioscos/{UID_DEL_USUARIO}
     const userDocRef = doc(db, 'kioscos', user.uid);
 
-    // ✅ INICIALIZAR EL DOCUMENTO CON LOS ARRAYS VACÍOS
+    // ✅ INICIALIZAR EL DOCUMENTO CON ROL DE USUARIO
     await setDoc(userDocRef, {
       nombre_kiosco: datosUser.nombre || 'Mi Kiosco', 
       fecha_creacion: new Date(),
-      
-      // ⭐ CAMPOS DE ARRAY VACÍOS ⭐
-      productos: [], 
+      rol: 'user',  // Usuario normal (vendedor)
       ventas: [],
     });
-
-    // ❌ Se elimina la inicialización de la Subcolección 'productos'
-    // ❌ Se elimina la inicialización de la Subcolección 'ventas'
     
     return user;
 
@@ -116,22 +167,21 @@ export const crearCuentaEmail = async (datosUser) => {
 }
 
 // Escucha cambios en tiempo real en la base de datos y las descarga
-export const getData = (userUID, callback) => {
+export const getData = (userUID, rol, callback) => {
     if (!userUID) return () => {};
 
     try {
-        // La referencia apunta al documento completo: /kioscos/{UID}
+        // Tanto admin como users tienen documento en kioscos
         const docRef = doc(db, 'kioscos', userUID);
         
         // Se suscribe al documento completo
         const unsubscribe = onSnapshot(docRef, docSnap => {
             if (docSnap.exists()) {
                 const data = docSnap.data();
-                // ⬅️ Retorna el objeto de datos completo
-                //console.log(data)
                 callback(data); 
             } else {
-                callback({}); // Retorna un objeto vacío si no existe
+                // Si no existe, crear uno vacío
+                callback({ rol: rol || 'user', ventas: {} }); 
             }
         });
         return unsubscribe;
@@ -142,23 +192,63 @@ export const getData = (userUID, callback) => {
     }
 };
 
-export const agregarProducto = async ( userUID, nuevoProducto ) => {
-  if(!userUID){
-    throw new error('S necesita el UID para agregar el producto');
+// CATÁLOGO GLOBAL - Solo admin puede agregar productos
+export const agregarProductoCatalogo = async (nuevoProducto) => {
+  try {
+    const catalogoRef = collection(db, 'catalogo_productos');
+    await addDoc(catalogoRef, {
+      ...nuevoProducto,
+      fecha_creacion: new Date()
+    });
+    console.log('Producto agregado al catálogo global');
+  } catch (error) {
+    console.error('Error al agregar producto al catálogo:', error);
+    throw error;
   }
+};
 
-  // Crear una referencia del documento del usuario logueado.
-  const userDocRef = doc(db, 'kioscos', userUID);
- try {
-  await updateDoc(userDocRef, {
-    productos: arrayUnion(nuevoProducto)
-  });
-  console.log('Producto agregado con exito')
- } catch (error) {
-  console.error('Error al cargar el producto: ', error);
-  throw error
- }
-}
+// Obtener todos los productos del catálogo
+export const obtenerCatalogo = (callback) => {
+  try {
+    const catalogoRef = collection(db, 'catalogo_productos');
+    const unsubscribe = onSnapshot(catalogoRef, (snapshot) => {
+      const productos = [];
+      snapshot.forEach((doc) => {
+        productos.push({ id: doc.id, ...doc.data() });
+      });
+      callback(productos);
+    });
+    return unsubscribe;
+  } catch (error) {
+    console.error('Error al obtener catálogo:', error);
+    callback([]);
+    return () => {};
+  }
+};
+
+// Actualizar producto del catálogo (solo admin)
+export const actualizarProductoCatalogo = async (idProducto, datosActualizados) => {
+  try {
+    const productoRef = doc(db, 'catalogo_productos', idProducto);
+    await updateDoc(productoRef, datosActualizados);
+    console.log('Producto actualizado en el catálogo');
+  } catch (error) {
+    console.error('Error al actualizar producto:', error);
+    throw error;
+  }
+};
+
+// Eliminar producto del catálogo (solo admin)
+export const eliminarProductoCatalogo = async (idProducto) => {
+  try {
+    const productoRef = doc(db, 'catalogo_productos', idProducto);
+    await deleteDoc(productoRef);
+    console.log('Producto eliminado del catálogo');
+  } catch (error) {
+    console.error('Error al eliminar producto:', error);
+    throw error;
+  }
+};
 
 // Opción 1: La venta es un objeto Map/JSON, no un array
 export const agregarVentas = async ( userUID, nuevaVenta, fulldate, condicion ) => {
@@ -190,19 +280,10 @@ export const agregarVentas = async ( userUID, nuevaVenta, fulldate, condicion ) 
     }
 }
 
+// Ya no se necesita esta función porque los productos están en el catálogo global
+// Se mantiene por compatibilidad pero no se usa
 export const actualizarProductos = async ( userUID, actualizacion ) => {
-  //console.log(userUID)
-  if(!userUID){
-    throw new error('S necesita el UID para agregar el producto');
-  }
-  const docRef = doc(db, 'kioscos', userUID)
-  try {
-    await setDoc(docRef, {
-            productos: actualizacion
-        }, { merge: true });
-  } catch (error) {
-    console.error('No se puedo actualizar productos.', error);
-  }
+  console.warn('Esta función está deprecada. Los productos ahora están en el catálogo global.');
 }
 
 /*
@@ -297,6 +378,44 @@ export const guardarDatosbancarios = async (datos) => {
     return { ok: false, error: error }
   }
 }
+
+// Obtener todos los usuarios (solo para admin)
+export const obtenerTodosLosUsuarios = async () => {
+  try {
+    const kioscosRef = collection(db, 'kioscos');
+    const snapshot = await getDocs(kioscosRef);
+    
+    const usuarios = [];
+    snapshot.forEach((doc) => {
+      usuarios.push({
+        uid: doc.id,
+        ...doc.data()
+      });
+    });
+    
+    return usuarios;
+  } catch (error) {
+    console.error('Error al obtener usuarios:', error);
+    return [];
+  }
+};
+
+// Obtener ventas de un usuario específico
+export const obtenerVentasUsuario = async (userUID) => {
+  try {
+    const userDocRef = doc(db, 'kioscos', userUID);
+    const docSnap = await getDoc(userDocRef);
+    
+    if (docSnap.exists()) {
+      const data = docSnap.data();
+      return data.ventas || {};
+    }
+    return {};
+  } catch (error) {
+    console.error('Error al obtener ventas del usuario:', error);
+    return {};
+  }
+};
 /*
 // cambiar contraseña
 export const cambiarContrasena = async (user, contraseñaActual, nuevaContrasena) => {

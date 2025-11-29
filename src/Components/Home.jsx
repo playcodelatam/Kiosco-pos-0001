@@ -1,5 +1,5 @@
 import React,{ useState, useEffect, useRef} from 'react';
-import { cerrarSesion } from '../firebase/auth.js'
+import { cerrarSesion, obtenerCatalogo } from '../firebase/auth.js'
 import Ingresar from './Ingresar';
 import Lista from './Lista';
 import Caja from './Caja';
@@ -22,7 +22,9 @@ const Home = ({ idDoc,
                 sacarVentaDiaria,
                 productoMasVendido,
                 masVendido,
-                ventaDiaria
+                ventaDiaria,
+                rolUsuario,
+                usuarioLogueado
               }) => {  
 
   const [ isIngresar, setIsIngresar ] = useState(false);
@@ -41,29 +43,54 @@ const Home = ({ idDoc,
 
   const menuRef = useRef(null)
 
+  // Cargar catálogo global de productos
+  useEffect(() => {
+    const unsubscribe = obtenerCatalogo((catalogoProductos) => {
+      setProductos(catalogoProductos);
+    });
+    
+    return () => unsubscribe();
+  }, []);
+
   return (
     <div className="contenedor">
       <header>
         <h1>KIOSCO</h1>
+        <div style={{
+          position: 'absolute',
+          top: '10px',
+          right: '10px',
+          padding: '5px 10px',
+          background: rolUsuario === 'admin' ? '#ff6b6b' : '#4ecdc4',
+          color: 'white',
+          borderRadius: '5px',
+          fontSize: '12px',
+          fontWeight: 'bold'
+        }}>
+          {rolUsuario === 'admin' ? '👑 ADMINISTRADOR' : '👤 VENDEDOR'}
+        </div>
       </header>
       <main>
         <nav>
-          <button 
-            title='Agregar Productos'
-            className="btn-nav"
-            onClick={() => {
-              setValorCodigo('');
-              setIsEditarProducto(false);
-              setIsCaja(false);
-              setIsLista(false);
-              setIsIngresar(true);
-              setIsOnCamara(true);
-              setIsVentasDiarias(false)
-              setIsOpenMenu(true);
-            }}
-            >
-              <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#eee"><path d="M440-440H200v-80h240v-240h80v240h240v80H520v240h-80v-240Z"/></svg>
-            </button>
+          {/* Solo admin puede agregar productos */}
+          {rolUsuario === 'admin' && (
+            <button 
+              title='Agregar Productos'
+              className="btn-nav"
+              onClick={() => {
+                setValorCodigo('');
+                setIsEditarProducto(false);
+                setIsCaja(false);
+                setIsLista(false);
+                setIsIngresar(true);
+                setIsOnCamara(true);
+                setIsVentasDiarias(false)
+                setIsOpenMenu(true);
+              }}
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#eee"><path d="M440-440H200v-80h240v-240h80v240h240v80H520v240h-80v-240Z"/></svg>
+              </button>
+          )}
           <button 
             title='Lista de Productos'
             className="btn-nav"
@@ -181,6 +208,8 @@ const Home = ({ idDoc,
             isVentasDiarias &&
               <VentasDiarias 
                 ventaDiaria={ventaDiaria}
+                rolUsuario={rolUsuario}
+                usuarioLogueado={usuarioLogueado}
               />
           }
           { 
@@ -199,6 +228,7 @@ const Home = ({ idDoc,
                 setProductos={setProductos}
                 setIsLista={setIsLista}
                 idDoc={idDoc}
+                rolUsuario={rolUsuario}
               />
           }
           {
@@ -206,13 +236,11 @@ const Home = ({ idDoc,
               <Ingresar 
               isOnCamara={isOnCamara}
               setIsOnCamara={setIsOnCamara}
-              setProductos={setProductos}
-              productos={productos}
               numero={numero}
               setNumero={setNumero}
-              idDoc={idDoc}
               setIsLista={setIsLista}
               setIsIngresar={setIsIngresar}
+              rolUsuario={rolUsuario}
               /> 
           }
           {
@@ -232,6 +260,7 @@ const Home = ({ idDoc,
               idDoc={idDoc}
               isLoaderGeneral={isLoaderGeneral}
               setIsLoaderGeneral={setIsLoaderGeneral}
+              rolUsuario={rolUsuario}
               />
           }
           {

@@ -1,19 +1,18 @@
 import React, { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
-import { agregarProducto } from '../firebase/auth.js';
+import { agregarProductoCatalogo } from '../firebase/auth.js';
+import { convertirImagenABase64 } from '../firebase/storage.js';
 import Lector from './Lector';
 import Loader from './Loader.jsx';
 import './ingresar.css'
 const Ingresar = ({ 
                   isOnCamara, 
                   setIsOnCamara ,
-                  setProductos,
-                  productos,
                   numero,
                   setNumero,
-                  idDoc,
                   setIsLista,
-                  setIsIngresar
+                  setIsIngresar,
+                  rolUsuario
                 }) => {  
 
 const [ archivoOriginal, setArchivoOriginal] = useState(null);
@@ -40,13 +39,32 @@ useEffect(() => {
 
 const cargarProducto = async (data) => {
   setIsLoader(true)
+  
+  // Solo admin puede agregar productos
+  if (rolUsuario !== 'admin') {
+    alert('Solo el administrador puede agregar productos');
+    setIsLoader(false);
+    return;
+  }
+  
    if (!archivoOriginal) {
     alert('Debe seleccionar una imagen')
+    setIsLoader(false);
     return;
   }
 
-  const urlFinal = await handleChange(); // convierte la imagen a webp y la sube a cloudinary, la guarda 
-          // en una variable para usarla en la url del nuevoProducto, asi siempre va a usar la url correcta.  
+  try {
+    console.log('Convirtiendo imagen a Base64...');
+    const imagenBase64 = await convertirImagenABase64(archivoOriginal);
+    
+    if (!imagenBase64) {
+      alert('Error al procesar la imagen. Intenta nuevamente.');
+      setIsLoader(false);
+      return;
+    }
+    
+    console.log('Imagen convertida exitosamente');
+    
     const nuevoProducto = {
       codigo: data.codigo,
       descripcion: data.descripcion,
@@ -55,79 +73,26 @@ const cargarProducto = async (data) => {
       tamano: data.tamano,
       cantidadOferta: data.cantidadOferta,
       stock: data.stock,
-      img: urlFinal
+      img: imagenBase64
     }
-   await agregarProducto(idDoc, nuevoProducto)
-   setIsLoader(false)
-   reset();
-   setIsIngresar(false);
-   setIsLista(true);
+    
+    console.log('Guardando producto en catálogo...');
+    await agregarProductoCatalogo(nuevoProducto)
+    console.log('Producto guardado exitosamente');
+    
+    setIsLoader(false)
+    reset();
+    setArchivoOriginal(null);
+    setIsIngresar(false);
+    setIsLista(true);
+  } catch (error) {
+    console.error('Error al cargar producto:', error);
+    alert('Error al cargar el producto: ' + error.message);
+    setIsLoader(false);
+  }
 }
 
-const handleChange = async (e) => {        
-    if (!archivoOriginal) return;
-    //console.log('cargando el archivo: ', archivoOriginal)
-    const webpBlob = await convertirAWebP(archivoOriginal);
-    const urlWebP = await subirACloudinary(webpBlob, archivoOriginal.name);
-    return urlWebP
-  };
-
-  const convertirAWebP = (file) => {
-    return new Promise((resolve) => {
-      const img = new Image();
-      const reader = new FileReader();
-
-      reader.onload = (e) => {
-        img.src = e.target.result;
-      };
-
-      img.onload = () => {
-        const canvas = document.createElement("canvas");
-        canvas.width = img.width;
-        canvas.height = img.height;
-        const ctx = canvas.getContext("2d");
-        ctx.drawImage(img, 0, 0);
-        canvas.toBlob(
-          (blob) => {
-            resolve(blob);
-          },
-          "image/webp",
-          0.8 // calidad
-        );
-      };
-
-      reader.readAsDataURL(file);
-    });
-  };
-
-  const subirACloudinary = async (webpBlob, originalName) => {
-    // Reemplazar la extensión por .webp
-    const baseName = originalName.split(".").slice(0, -1).join(".");
-    const webpFileName = `${baseName}.webp`;
-
-    const formData = new FormData();
-    formData.append("file", webpBlob, webpFileName);
-    formData.append("upload_preset", "carrito_upload");
-    formData.append("folder", `kioscos/${idDoc}`);
-
-    const res = await fetch(
-      "https://api.cloudinary.com/v1_1/dujru85ae/image/upload",
-      {
-        method: "POST",
-        body: formData,
-      }
-    );
-
-    const data = await res.json();
-
-    if (data.secure_url) {
-      setIsPublicId(data.public_id)
-      return data.secure_url;
-    } else {
-      console.error("Error al subir:", data);
-      return null;
-    }
-  };
+// Funciones de Cloudinary removidas - ahora se usa Firebase Storage
 
 
 /*
