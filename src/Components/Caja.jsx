@@ -33,6 +33,8 @@ const [ vuelto, setVuelto ] = useState('');
 const [ vueltoPuro, setVueltoPuro ] = useState(0);
 const [ isLoader, setIsLoader ] = useState(false);
 const [ mdPago, SetMdPago] = useState('');
+const [ interes, setInteres ] = useState('');
+const [ totalConInteres, setTotalConInteres ] = useState(0);
 
 const toggleMenu = (codigoItem) => {
     setIdCodigoEditar(idCodigoEditar === codigoItem ? null : codigoItem);
@@ -69,6 +71,17 @@ useEffect(() => {
     const cantidadProductos = carrito.reduce((acc, cant) => Number(acc) + Number(cant.cantidad), 0)
     setCantidad(cantidadProductos)
 }, [carrito]);
+
+// Calcular total con interés
+useEffect(() => {
+    if (interes && Number(interes) > 0) {
+        const porcentajeInteres = Number(interes) / 100;
+        const montoInteres = subtotal * porcentajeInteres;
+        setTotalConInteres(subtotal + montoInteres);
+    } else {
+        setTotalConInteres(subtotal);
+    }
+}, [subtotal, interes]);
 
  // detecta si se escaneo algun numero
 useEffect(() => {
@@ -138,7 +151,7 @@ const formatearTotalItem = (cant, precio) => {
 }
 
 const calcularVuelto = () => {    
-    const vueltoReal = vueltoPuro - subtotal;       
+    const vueltoReal = vueltoPuro - totalConInteres;       
     if (vueltoReal <= 0 || vueltoPuro === 0) {       
         return ''; 
     }    
@@ -176,7 +189,8 @@ const cobrar = async () => {
         carrito: carrito,
         cantidad: cantidad,
         mtPago: mdPago || 'Efectivo',
-        total: subtotal 
+        interes: interes || '0',
+        total: totalConInteres 
       } 
     ]
   }
@@ -185,6 +199,7 @@ const cobrar = async () => {
   setCantidad(0)
   setVuelto('')
   setVueltoPuro(0)
+  setInteres('')
   setIsLoader(false)
   }else{
     const nuevaVenta =    
@@ -193,7 +208,8 @@ const cobrar = async () => {
         carrito: carrito,
         cantidad: cantidad,
         mtPago: mdPago || 'Efectivo',
-        total: subtotal 
+        interes: interes || '0',
+        total: totalConInteres 
       }   
   
     await agregarVentas(idDoc, nuevaVenta, fulldate, true);
@@ -201,6 +217,7 @@ const cobrar = async () => {
       setCantidad(0)
       setVuelto('')
       setVueltoPuro(0)
+      setInteres('')
       setIsLoader(false)
   }    
   } catch (error) {
@@ -232,7 +249,6 @@ const cobrar = async () => {
     <div className="buscador-producto">
       <div className='nav-buscador'>
       <input type="text"
-      inputMode="numeric"
       placeholder='Buscar...'
       value={valorCodigo}
       onChange={(e) => { 
@@ -243,7 +259,7 @@ const cobrar = async () => {
         className='btn-scann'
         onClick={() => { setIsOnCamara(true)}}
         >
-        Ecanear Codigo
+        Escanear Codigo
       </button>
         </div>
       
@@ -394,7 +410,7 @@ const cobrar = async () => {
         <p style={{color: 'yellow', fontSize:'30px'}}>Total
           <span>
           {
-            Number(subtotal).toLocaleString('es-AR', {
+            Number(totalConInteres).toLocaleString('es-AR', {
             style: 'currency',
             currency: 'ARS',
             minimumFractionDigits: 0,
@@ -403,6 +419,16 @@ const cobrar = async () => {
           }
         </span>
         </p>
+        {interes && Number(interes) > 0 && (
+          <p style={{color: '#ccc', fontSize:'14px', marginTop: '-10px'}}>
+            Subtotal: {Number(subtotal).toLocaleString('es-AR', {
+              style: 'currency',
+              currency: 'ARS',
+              minimumFractionDigits: 0,
+              maximumFractionDigits: 0
+            })} + {interes}% interés
+          </p>
+        )}
         <span>Cambio:
           <input 
             type='text'
@@ -429,11 +455,27 @@ const cobrar = async () => {
           className='mediopago'
           onChange={(e) => SetMdPago(e.target.value)}
         >
-          <option defaultValue=''>...</option>
+          <option defaultValue=''>Transferencia</option>
           <option value='Efectivo'>Efectivo</option>
           <option value='Mercado Pago'>Mercado Pago</option>
-          <option value='Débito'>Devito</option>
+          <option value='Tarjeta'>Tarjeta</option>
         </select>
+        </span>
+        <span className='mdPago'>
+          <p>Interés (opcional)</p>
+          <input 
+            type='text'
+            inputMode='numeric'
+            placeholder='%'
+            style={{ 
+              padding: '5px', 
+              textAlign:'center', 
+              width: '60px',
+              fontWeight:'bold'
+            }}
+            value={interes}
+            onChange={(e) => setInteres(e.target.value)}
+          />
         </span>
         
       </div>
