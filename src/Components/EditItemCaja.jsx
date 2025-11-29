@@ -53,7 +53,7 @@ const EditItemCaja = ({
         <form
           onSubmit={handleSubmit(editarItem)}
         >
-           <input type="text" name="cantidad"
+           <input type="text" name="cantidad" inputMode="numeric"
              {...register('cantidad', {
                   required: {
                   value: false,
@@ -62,7 +62,7 @@ const EditItemCaja = ({
             })}
             />
           
-            <input type="text" name="precio"
+            <input type="text" name="precio" inputMode="numeric"
              {...register('precio', {
                   required: {
                   value: false,

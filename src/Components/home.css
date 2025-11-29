@@ -81,14 +81,14 @@ nav{
     color: var(--secondary);
 }
 .btn-nav {
-  width: 35px;
-  height: 35px;
+  width: 52px;
+  height: 52px;
   font-size: 16px;
   display: flex;
   justify-content: center;
   align-items: center;
   background: white;
-  padding: 8px;
+  padding: 12px;
   border: none;
   background-color: var(--secondary);
   color: white;

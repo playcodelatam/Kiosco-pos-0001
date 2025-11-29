@@ -231,7 +231,8 @@ const cobrar = async () => {
         <h3>CAJA</h3>
     <div className="buscador-producto">
       <div className='nav-buscador'>
-      <input type="text" 
+      <input type="text"
+      inputMode="numeric"
       placeholder='Buscar...'
       value={valorCodigo}
       onChange={(e) => { 
@@ -404,7 +405,8 @@ const cobrar = async () => {
         </p>
         <span>Cambio:
           <input 
-            type='text'  
+            type='text'
+            inputMode='numeric'
             style={{ 
               padding: '5px', 
               textAlign:'right', 

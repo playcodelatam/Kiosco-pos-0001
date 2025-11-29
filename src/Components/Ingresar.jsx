@@ -135,7 +135,7 @@ return (
         onSubmit={handleSubmit(cargarProducto)}
       >
         <label>#Codigo
-        <input type="text" name="id"
+        <input type="text" name="id" inputMode="numeric"
         {...register('codigo', {
           required: {
             value: true,
@@ -171,7 +171,7 @@ return (
         { errors.tamano?.message && <p className='text-error'>{errors.tamano.message}</p>}
 
         <label>Precio
-        <input type="text" name="precio" 
+        <input type="text" name="precio" inputMode="numeric"
         {...register('precio', {
           required: {
             value: true,
@@ -187,7 +187,7 @@ return (
         { errors.precio?.message && <p className='text-error'>{errors.precio.message}</p>}
 
         <label>Precio Oferta
-        <input type="text" name="precioOferta" 
+        <input type="text" name="precioOferta" inputMode="numeric"
         {...register('precioOff', {
           required: {
             value: false,
@@ -199,7 +199,7 @@ return (
         { errors.precioOff?.message && <p className='text-error'>{errors.precioOff.message}</p>}
 
         <label>Cantidad Oferta
-        <input type="text" name="id"
+        <input type="text" name="id" inputMode="numeric"
         {...register('cantidadOferta', {
           required: {
             value: false,
@@ -211,7 +211,7 @@ return (
         { errors.cantidadOferta?.message && <p className='text-error'>{errors.cantidadOferta.message}</p>}
 
         <label>Stock
-        <input type="text" name="stock" 
+        <input type="text" name="stock" inputMode="numeric"
         {...register('stock', {
           required: {
             value: true,
