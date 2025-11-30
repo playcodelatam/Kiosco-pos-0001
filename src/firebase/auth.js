@@ -25,6 +25,11 @@ import {
         } from "firebase/auth";
 
 import { auth, db } from "./config.js";
+import { 
+  guardarCatalogo as guardarCatalogoCache, 
+  obtenerCatalogo as obtenerCatalogoCache, 
+  limpiarCatalogo as limpiarCatalogoCache 
+} from '../services/cacheService.js';
 
 const provider = new GoogleAuthProvider();
 
@@ -192,15 +197,9 @@ export const getData = (userUID, rol, callback) => {
     }
 };
 
-// Función auxiliar para limpiar caché del catálogo
-const limpiarCacheCatalogo = () => {
-  try {
-    localStorage.removeItem('catalogo_cache');
-    localStorage.removeItem('catalogo_cache_timestamp');
-    console.log('🗑️ Caché del catálogo limpiada');
-  } catch (e) {
-    console.warn('No se pudo limpiar caché:', e);
-  }
+// Función auxiliar para limpiar caché del catálogo (ahora usa IndexedDB)
+const limpiarCacheCatalogo = async () => {
+  await limpiarCatalogoCache();
 };
 
 // CATÁLOGO GLOBAL - Solo admin puede agregar productos
@@ -221,49 +220,46 @@ export const agregarProductoCatalogo = async (nuevoProducto) => {
 
 // Obtener todos los productos del catálogo
 export const obtenerCatalogo = (callback) => {
-  try {
-    // Intentar cargar desde caché primero
-    const cachedData = localStorage.getItem('catalogo_cache');
-    const cacheTimestamp = localStorage.getItem('catalogo_cache_timestamp');
-    const CACHE_DURATION = 24 * 60 * 60 * 1000; // 24 horas en milisegundos
-    
-    // Si hay caché y no ha expirado, usar caché
-    if (cachedData && cacheTimestamp) {
-      const now = Date.now();
-      const cacheAge = now - parseInt(cacheTimestamp);
+  // Función async para manejar IndexedDB
+  const cargarCatalogo = async () => {
+    try {
+      // Intentar cargar desde IndexedDB primero
+      const cacheData = await obtenerCatalogoCache();
       
-      if (cacheAge < CACHE_DURATION) {
-        console.log('📦 Cargando catálogo desde caché (ahorro de datos)');
-        const productosCache = JSON.parse(cachedData);
-        callback(productosCache);
+      // Si hay caché válida, usarla inmediatamente
+      if (cacheData.esValido && cacheData.productos) {
+        callback(cacheData.productos);
       }
-    }
-    
-    // Siempre escuchar cambios en tiempo real
-    const catalogoRef = collection(db, 'catalogo_productos');
-    const unsubscribe = onSnapshot(catalogoRef, (snapshot) => {
-      const productos = [];
-      snapshot.forEach((doc) => {
-        productos.push({ id: doc.id, ...doc.data() });
+      
+      // Siempre escuchar cambios en tiempo real
+      const catalogoRef = collection(db, 'catalogo_productos');
+      const unsubscribe = onSnapshot(catalogoRef, async (snapshot) => {
+        const productos = [];
+        snapshot.forEach((doc) => {
+          productos.push({ id: doc.id, ...doc.data() });
+        });
+        
+        // Guardar en IndexedDB
+        await guardarCatalogoCache(productos);
+        
+        callback(productos);
       });
       
-      // Guardar en caché
-      try {
-        localStorage.setItem('catalogo_cache', JSON.stringify(productos));
-        localStorage.setItem('catalogo_cache_timestamp', Date.now().toString());
-        console.log('💾 Catálogo guardado en caché');
-      } catch (e) {
-        console.warn('No se pudo guardar en caché:', e);
-      }
-      
-      callback(productos);
-    });
-    return unsubscribe;
-  } catch (error) {
-    console.error('Error al obtener catálogo:', error);
-    callback([]);
-    return () => {};
-  }
+      return unsubscribe;
+    } catch (error) {
+      console.error('Error al obtener catálogo:', error);
+      callback([]);
+      return () => {};
+    }
+  };
+  
+  // Ejecutar y retornar la función de limpieza
+  let unsubscribe = () => {};
+  cargarCatalogo().then(unsub => {
+    if (unsub) unsubscribe = unsub;
+  });
+  
+  return () => unsubscribe();
 };
 
 // Actualizar producto del catálogo (solo admin)
