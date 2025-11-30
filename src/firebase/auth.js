@@ -192,6 +192,17 @@ export const getData = (userUID, rol, callback) => {
     }
 };
 
+// Función auxiliar para limpiar caché del catálogo
+const limpiarCacheCatalogo = () => {
+  try {
+    localStorage.removeItem('catalogo_cache');
+    localStorage.removeItem('catalogo_cache_timestamp');
+    console.log('🗑️ Caché del catálogo limpiada');
+  } catch (e) {
+    console.warn('No se pudo limpiar caché:', e);
+  }
+};
+
 // CATÁLOGO GLOBAL - Solo admin puede agregar productos
 export const agregarProductoCatalogo = async (nuevoProducto) => {
   try {
@@ -200,6 +211,7 @@ export const agregarProductoCatalogo = async (nuevoProducto) => {
       ...nuevoProducto,
       fecha_creacion: new Date()
     });
+    limpiarCacheCatalogo(); // Limpiar caché al agregar
     console.log('Producto agregado al catálogo global');
   } catch (error) {
     console.error('Error al agregar producto al catálogo:', error);
@@ -210,12 +222,40 @@ export const agregarProductoCatalogo = async (nuevoProducto) => {
 // Obtener todos los productos del catálogo
 export const obtenerCatalogo = (callback) => {
   try {
+    // Intentar cargar desde caché primero
+    const cachedData = localStorage.getItem('catalogo_cache');
+    const cacheTimestamp = localStorage.getItem('catalogo_cache_timestamp');
+    const CACHE_DURATION = 24 * 60 * 60 * 1000; // 24 horas en milisegundos
+    
+    // Si hay caché y no ha expirado, usar caché
+    if (cachedData && cacheTimestamp) {
+      const now = Date.now();
+      const cacheAge = now - parseInt(cacheTimestamp);
+      
+      if (cacheAge < CACHE_DURATION) {
+        console.log('📦 Cargando catálogo desde caché (ahorro de datos)');
+        const productosCache = JSON.parse(cachedData);
+        callback(productosCache);
+      }
+    }
+    
+    // Siempre escuchar cambios en tiempo real
     const catalogoRef = collection(db, 'catalogo_productos');
     const unsubscribe = onSnapshot(catalogoRef, (snapshot) => {
       const productos = [];
       snapshot.forEach((doc) => {
         productos.push({ id: doc.id, ...doc.data() });
       });
+      
+      // Guardar en caché
+      try {
+        localStorage.setItem('catalogo_cache', JSON.stringify(productos));
+        localStorage.setItem('catalogo_cache_timestamp', Date.now().toString());
+        console.log('💾 Catálogo guardado en caché');
+      } catch (e) {
+        console.warn('No se pudo guardar en caché:', e);
+      }
+      
       callback(productos);
     });
     return unsubscribe;
@@ -231,6 +271,7 @@ export const actualizarProductoCatalogo = async (idProducto, datosActualizados) 
   try {
     const productoRef = doc(db, 'catalogo_productos', idProducto);
     await updateDoc(productoRef, datosActualizados);
+    limpiarCacheCatalogo(); // Limpiar caché al actualizar
     console.log('Producto actualizado en el catálogo');
   } catch (error) {
     console.error('Error al actualizar producto:', error);
@@ -243,6 +284,7 @@ export const eliminarProductoCatalogo = async (idProducto) => {
   try {
     const productoRef = doc(db, 'catalogo_productos', idProducto);
     await deleteDoc(productoRef);
+    limpiarCacheCatalogo(); // Limpiar caché al eliminar
     console.log('Producto eliminado del catálogo');
   } catch (error) {
     console.error('Error al eliminar producto:', error);
