@@ -44,7 +44,7 @@
 }
 
 .nav-buscador input[type="text"] {
-    flex-grow: 1;
+    flex-grow: 0.9;
     padding: 13px;
     border: 1px solid #ccc;
     border-radius: var(--borde-redondeado);
@@ -59,7 +59,10 @@
     border-radius: var(--borde-redondeado);
     font-weight: bold;
     font-size: 18px;
-    min-width: 156px; 
+    min-width: 70px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     cursor: pointer;
 }
 
