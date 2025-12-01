@@ -35,6 +35,8 @@ const [ isLoader, setIsLoader ] = useState(false);
 const [ mdPago, SetMdPago] = useState('');
 const [ interes, setInteres ] = useState('');
 const [ totalConInteres, setTotalConInteres ] = useState(0);
+const [ mostrarNotificacion, setMostrarNotificacion ] = useState(false);
+const [ tipoNotificacion, setTipoNotificacion ] = useState(''); // 'exito' o 'error'
 
 const toggleMenu = (codigoItem) => {
     setIdCodigoEditar(idCodigoEditar === codigoItem ? null : codigoItem);
@@ -203,6 +205,9 @@ const cobrar = async () => {
   setVueltoPuro(0)
   setInteres('')
   setIsLoader(false)
+  // Mostrar notificación de éxito
+  setTipoNotificacion('exito')
+  setMostrarNotificacion(true)
   }else{
     const nuevaVenta =    
       { 
@@ -223,9 +228,16 @@ const cobrar = async () => {
       setVueltoPuro(0)
       setInteres('')
       setIsLoader(false)
+      // Mostrar notificación de éxito
+      setTipoNotificacion('exito')
+      setMostrarNotificacion(true)
   }    
   } catch (error) {
     console.error('Error al cargar la venta nueva: ', error)
+    setIsLoader(false)
+    // Mostrar notificación de error
+    setTipoNotificacion('error')
+    setMostrarNotificacion(true)
   }
 }
 
@@ -497,6 +509,42 @@ const cobrar = async () => {
           isLoader ? <Loader /> : 'COBRAR'
         }
       </button>
+
+      {/* Modal de Notificación */}
+      {mostrarNotificacion && (
+        <div className="modal-overlay-notificacion" onClick={() => setMostrarNotificacion(false)}>
+          <div className="modal-notificacion" onClick={(e) => e.stopPropagation()}>
+            <div className={`modal-header-notificacion ${tipoNotificacion}`}>
+              {tipoNotificacion === 'exito' ? (
+                <>
+                  <div className="icono-notificacion">✓</div>
+                  <h3>¡Cobro Exitoso!</h3>
+                </>
+              ) : (
+                <>
+                  <div className="icono-notificacion">✕</div>
+                  <h3>Error en el Cobro</h3>
+                </>
+              )}
+            </div>
+            <div className="modal-body-notificacion">
+              {tipoNotificacion === 'exito' ? (
+                <p>El cobro fue realizado con éxito. Puedes ver el detalle en <strong>Ventas Diarias</strong>.</p>
+              ) : (
+                <p>No se pudo completar el cobro. Por favor, revisa tu conexión a internet e intenta de nuevo.</p>
+              )}
+            </div>
+            <div className="modal-footer-notificacion">
+              <button 
+                className="btn-cerrar-notificacion"
+                onClick={() => setMostrarNotificacion(false)}
+              >
+                Cerrar
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 };
