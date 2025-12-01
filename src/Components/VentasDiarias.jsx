@@ -71,6 +71,13 @@ const VentasDiarias = ({
   };
 
   const generarPDF = (detalle) => {
+    console.log('=== GENERANDO PDF ===');
+    console.log('detalle:', detalle);
+    console.log('detalle.usuarioSeleccionado:', detalle.usuarioSeleccionado);
+    console.log('usuarioSeleccionado del estado:', usuarioSeleccionado);
+    console.log('usuarioSeleccionado.nombre_kiosco:', usuarioSeleccionado?.nombre_kiosco);
+    console.log('====================');
+    
     const doc = new jsPDF();
     const fechaFormateada = `${detalle.fecha.slice(0,2)}-${detalle.fecha.slice(2,4)}-${detalle.fecha.slice(4,8)}`;
     const totalDelDia = detalle.ventas.reduce((acc, venta) => acc + venta.total, 0);
@@ -87,12 +94,9 @@ const VentasDiarias = ({
     
     let yPosition = 25;
     
-    // Mostrar nombre del vendedor si es admin y hay usuario seleccionado
-    if (detalle.usuarioSeleccionado) {
-      const nombreVendedor = detalle.usuarioSeleccionado.nombre_kiosco || 
-                            detalle.usuarioSeleccionado.email || 
-                            'Usuario';
-      doc.text(`Vendedor: ${nombreVendedor}`, 14, yPosition);
+    // Usar usuarioSeleccionado del estado directamente (igual que en "Ventas de:")
+    if (usuarioSeleccionado && usuarioSeleccionado.nombre_kiosco) {
+      doc.text(`Vendedor: ${usuarioSeleccionado.nombre_kiosco}`, 14, yPosition);
       yPosition += 7;
     }
     
