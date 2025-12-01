@@ -86,9 +86,19 @@ const VentasDiarias = ({
 
   const verDetalleVenta = (fechaOriginal) => {
     const ventasDelDia = ventasCompletasUsuario[fechaOriginal];
+    
+    // Determinar nombre del usuario para el detalle
+    let nombreUsuario = 'Usuario';
+    if (rolUsuario === 'admin' && usuarioSeleccionado) {
+      nombreUsuario = usuarioSeleccionado.nombre_kiosco || 'Usuario sin nombre';
+    } else {
+      nombreUsuario = nombreKioscoActual || usuarioLogueado?.displayName || 'Usuario';
+    }
+    
     setDetalleVenta({
       fecha: fechaOriginal,
-      ventas: ventasDelDia
+      ventas: ventasDelDia,
+      nombreUsuario: nombreUsuario
     });
   };
 
@@ -111,16 +121,8 @@ const VentasDiarias = ({
     doc.setFontSize(12);
     doc.setFont(undefined, 'normal');
     
-    // Determinar nombre del usuario
-    let nombreUsuario = 'Usuario';
-    
-    if (rolUsuario === 'admin' && usuarioSeleccionado) {
-      // Admin viendo ventas de otro usuario
-      nombreUsuario = usuarioSeleccionado.nombre_kiosco || 'Usuario sin nombre';
-    } else {
-      // Usuario viendo sus propias ventas
-      nombreUsuario = nombreKioscoActual || usuarioLogueado?.displayName || 'Usuario';
-    }
+    // Usar el nombre que viene en el detalle
+    const nombreUsuario = detalle.nombreUsuario || 'Usuario';
     
     doc.text(`Usuario: ${nombreUsuario}`, 14, 25);
     doc.text(`Fecha: ${fechaFormateada}`, 14, 32);
