@@ -147,24 +147,33 @@ const productoMasVendido = () => {
   // Detectar estado de autenticación
   useEffect(() => {
     console.log('🔍 Iniciando verificación de autenticación...');
+    let authResolved = false;
     
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       console.log('🔍 onAuthStateChanged ejecutado:', user ? `Usuario: ${user.email}` : 'Sin usuario');
+      console.log('🔍 authResolved:', authResolved);
       
-      if (user) {
-        console.log('✅ Usuario autenticado:', user.email);
-        setUsuarioLogueado(user);
-        setIsLogin(false);
-        setIsHome(true);
+      // Solo procesar el primer evento de autenticación
+      if (!authResolved) {
+        authResolved = true;
+        
+        if (user) {
+          console.log('✅ Usuario autenticado:', user.email);
+          setUsuarioLogueado(user);
+          setIsLogin(false);
+          setIsHome(true);
+        } else {
+          console.log('❌ No hay usuario autenticado');
+          setUsuarioLogueado(null);
+          setIsHome(false);
+          setIsLogin(true);
+        }
+        // Terminar loading después de verificar
+        setAuthLoading(false);
+        console.log('✅ Loading completado');
       } else {
-        console.log('❌ No hay usuario autenticado');
-        setUsuarioLogueado(null);
-        setIsHome(false);
-        setIsLogin(true);
+        console.log('⚠️ onAuthStateChanged ejecutado nuevamente - IGNORADO');
       }
-      // Terminar loading después de verificar
-      setAuthLoading(false);
-      console.log('✅ Loading completado');
     });
 
     // Cleanup
