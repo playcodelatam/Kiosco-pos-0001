@@ -87,16 +87,29 @@ const VentasDiarias = ({
   const verDetalleVenta = (fechaOriginal) => {
     const ventasDelDia = ventasCompletasUsuario[fechaOriginal];
     
+    console.log('=== DEBUG verDetalleVenta ===');
+    console.log('rolUsuario:', rolUsuario);
+    console.log('usuarioSeleccionado:', usuarioSeleccionado);
+    console.log('usuarioSeleccionado completo:', JSON.stringify(usuarioSeleccionado, null, 2));
+    
     // Solo incluir nombre si es admin
     let nombreUsuario = null;
+    let emailUsuario = null;
+    
     if (rolUsuario === 'admin' && usuarioSeleccionado) {
-      nombreUsuario = usuarioSeleccionado.nombre_kiosco || 'Usuario sin nombre';
+      nombreUsuario = usuarioSeleccionado.nombre_kiosco || null;
+      emailUsuario = usuarioSeleccionado.email || null;
+      console.log('nombreUsuario extraído:', nombreUsuario);
+      console.log('emailUsuario extraído:', emailUsuario);
     }
+    
+    console.log('============================');
     
     setDetalleVenta({
       fecha: fechaOriginal,
       ventas: ventasDelDia,
-      nombreUsuario: nombreUsuario
+      nombreUsuario: nombreUsuario,
+      emailUsuario: emailUsuario
     });
   };
 
@@ -121,9 +134,18 @@ const VentasDiarias = ({
     
     let yPosition = 25;
     
-    // Mostrar nombre de usuario solo si es admin
+    console.log('=== DEBUG generarPDF ===');
+    console.log('detalle completo:', detalle);
+    console.log('detalle.nombreUsuario:', detalle.nombreUsuario);
+    console.log('detalle.emailUsuario:', detalle.emailUsuario);
+    console.log('========================');
+    
+    // Mostrar nombre o email de usuario solo si es admin
     if (detalle.nombreUsuario) {
       doc.text(`Usuario: ${detalle.nombreUsuario}`, 14, yPosition);
+      yPosition += 7;
+    } else if (detalle.emailUsuario) {
+      doc.text(`Usuario: ${detalle.emailUsuario}`, 14, yPosition);
       yPosition += 7;
     }
     
