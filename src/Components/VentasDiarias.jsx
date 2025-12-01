@@ -170,15 +170,26 @@ const VentasDiarias = ({
       doc.setFont(undefined, 'bold');
       doc.text(`Total venta: $${venta.total.toLocaleString('es-AR')}`, 14, yPosition);
       
+      console.log(`Venta #${idx + 1}:`, {
+        total: venta.total,
+        cambio: venta.cambio,
+        vuelto: venta.vuelto,
+        mtPago: venta.mtPago
+      });
+      
       // Cambio y Vuelto (si existen)
       if (venta.cambio && venta.cambio > 0) {
         yPosition += 5;
         doc.setFont(undefined, 'normal');
         doc.text(`Cambio: $${venta.cambio.toLocaleString('es-AR')}`, 14, yPosition);
+        console.log(`✓ Agregado Cambio: $${venta.cambio}`);
         
         if (venta.vuelto && venta.vuelto > 0) {
           doc.text(`Vuelto: $${venta.vuelto.toLocaleString('es-AR')}`, 80, yPosition);
+          console.log(`✓ Agregado Vuelto: $${venta.vuelto}`);
         }
+      } else {
+        console.log(`✗ NO se agregó cambio/vuelto - cambio: ${venta.cambio}, vuelto: ${venta.vuelto}`);
       }
       
       doc.setFont(undefined, 'normal');
