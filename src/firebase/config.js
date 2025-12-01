@@ -1,5 +1,5 @@
 import { initializeApp } from "firebase/app";
-import { getAuth } from "firebase/auth";
+import { getAuth, setPersistence, browserLocalPersistence } from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
 import { getStorage } from "firebase/storage";
 
@@ -29,5 +29,13 @@ const auth = getAuth(app);
 const db = getFirestore(app);
 const storage = getStorage(app);
 
+// Configurar persistencia de sesión al inicializar
+setPersistence(auth, browserLocalPersistence)
+  .then(() => {
+    console.log('✅ Persistencia de sesión configurada: browserLocalPersistence');
+  })
+  .catch((error) => {
+    console.error('❌ Error al configurar persistencia:', error);
+  });
 
 export { auth, db, storage };

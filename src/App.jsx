@@ -146,18 +146,25 @@ const productoMasVendido = () => {
 
   // Detectar estado de autenticación
   useEffect(() => {
+    console.log('🔍 Iniciando verificación de autenticación...');
+    
     const unsubscribe = onAuthStateChanged(auth, (user) => {
+      console.log('🔍 onAuthStateChanged ejecutado:', user ? `Usuario: ${user.email}` : 'Sin usuario');
+      
       if (user) {
+        console.log('✅ Usuario autenticado:', user.email);
         setUsuarioLogueado(user);
         setIsLogin(false);
         setIsHome(true);
       } else {
+        console.log('❌ No hay usuario autenticado');
         setUsuarioLogueado(null);
         setIsHome(false);
         setIsLogin(true);
       }
       // Terminar loading después de verificar
       setAuthLoading(false);
+      console.log('✅ Loading completado');
     });
 
     // Cleanup
@@ -185,7 +192,7 @@ const productoMasVendido = () => {
           borderRadius: '50%',
           animation: 'spin 1s linear infinite'
         }}></div>
-        <p style={{marginTop: '20px', fontSize: '18px'}}>Cargando Kiosco...</p>
+        <p style={{marginTop: '20px', fontSize: '18px'}}>Cargando sistema...</p>
         <style>{`
           @keyframes spin {
             0% { transform: rotate(0deg); }
