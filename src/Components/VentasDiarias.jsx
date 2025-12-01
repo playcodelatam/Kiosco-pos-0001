@@ -16,6 +16,11 @@ const VentasDiarias = ({
   const [cargando, setCargando] = useState(false);
   const [detalleVenta, setDetalleVenta] = useState(null);
   const [ventasCompletasUsuario, setVentasCompletasUsuario] = useState({});
+  
+  // Detectar si está en PWA
+  const esPWA = window.matchMedia('(display-mode: standalone)').matches || 
+                window.navigator.standalone || 
+                document.referrer.includes('android-app://');
 
   // Cargar lista de usuarios si es admin
   useEffect(() => {
@@ -66,10 +71,11 @@ const VentasDiarias = ({
     setDetalleVenta(null);
   };
 
-  const generarPDF = (detalle) => {
+  const generarPDF = async (detalle) => {
     const doc = new jsPDF();
     const fechaFormateada = `${detalle.fecha.slice(0,2)}-${detalle.fecha.slice(2,4)}-${detalle.fecha.slice(4,8)}`;
     const totalDelDia = detalle.ventas.reduce((acc, venta) => acc + venta.total, 0);
+    const nombreArchivo = `ventas_${fechaFormateada}.pdf`;
     
     // Título
     doc.setFontSize(18);
@@ -174,8 +180,31 @@ const VentasDiarias = ({
     yPosition += 7;
     doc.text(`TOTAL DEL DÍA: $${totalDelDia.toLocaleString('es-AR')}`, 105, yPosition, { align: 'center' });
     
-    // Descargar PDF
-    doc.save(`ventas_${fechaFormateada}.pdf`);
+    // Verificar si Web Share API está disponible (PWA/móvil)
+    if (navigator.share && navigator.canShare) {
+      try {
+        // Generar PDF como Blob
+        const pdfBlob = doc.output('blob');
+        const pdfFile = new File([pdfBlob], nombreArchivo, { type: 'application/pdf' });
+        
+        // Verificar si se puede compartir el archivo
+        if (navigator.canShare({ files: [pdfFile] })) {
+          await navigator.share({
+            title: 'Detalle de Ventas',
+            text: `Ventas del día ${fechaFormateada}`,
+            files: [pdfFile]
+          });
+          console.log('PDF compartido exitosamente');
+          return;
+        }
+      } catch (error) {
+        console.log('Error al compartir o usuario canceló:', error);
+        // Si falla, continuar con descarga normal
+      }
+    }
+    
+    // Descarga normal (fallback para desktop o si share falla)
+    doc.save(nombreArchivo);
   };
 
   const volverALista = () => {
@@ -270,11 +299,19 @@ const VentasDiarias = ({
             <button 
               className='btn-descargar-pdf'
               onClick={() => generarPDF(detalle)}
-              title='Descargar PDF'
+              title={esPWA ? 'Compartir PDF' : 'Descargar PDF'}
             >
-              <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="white">
-                <path d="M480-320 280-520l56-58 104 104v-326h80v326l104-104 56 58-200 200ZM240-160q-33 0-56.5-23.5T160-240v-120h80v120h480v-120h80v120q0 33-23.5 56.5T720-160H240Z"/>
-              </svg>
+              {esPWA ? (
+                // Ícono de compartir para PWA
+                <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="white">
+                  <path d="M720-80q-50 0-85-35t-35-85q0-7 1-14.5t3-13.5L322-392q-17 15-38 23.5t-44 8.5q-50 0-85-35t-35-85q0-50 35-85t85-35q23 0 44 8.5t38 23.5l282-164q-2-6-3-13.5t-1-14.5q0-50 35-85t85-35q50 0 85 35t35 85q0 50-35 85t-85 35q-23 0-44-8.5T638-672L356-508q2 6 3 13.5t1 14.5q0 7-1 14.5t-3 13.5l282 164q17-15 38-23.5t44-8.5q50 0 85 35t35 85q0 50-35 85t-85 35Z"/>
+                </svg>
+              ) : (
+                // Ícono de descarga para desktop
+                <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="white">
+                  <path d="M480-320 280-520l56-58 104 104v-326h80v326l104-104 56 58-200 200ZM240-160q-33 0-56.5-23.5T160-240v-120h80v120h480v-120h80v120q0 33-23.5 56.5T720-160H240Z"/>
+                </svg>
+              )}
             </button>
           </div>
         </div>
