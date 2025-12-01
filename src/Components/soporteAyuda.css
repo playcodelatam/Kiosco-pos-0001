@@ -1,0 +1,261 @@
+.modal-overlay-soporte {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.7);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 10000;
+  padding: 20px;
+}
+
+.modal-soporte {
+  background: white;
+  border-radius: 16px;
+  width: 100%;
+  max-width: 600px;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+}
+
+.modal-header-soporte {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 24px;
+  border-bottom: 2px solid #4DAAA7;
+  background: linear-gradient(135deg, #4DAAA7 0%, #3F8F8B 100%);
+  color: white;
+  border-radius: 16px 16px 0 0;
+}
+
+.modal-header-soporte h3 {
+  margin: 0;
+  font-size: 22px;
+  font-weight: 600;
+}
+
+.btn-cerrar-soporte {
+  background: transparent;
+  border: none;
+  color: white;
+  font-size: 32px;
+  cursor: pointer;
+  padding: 0;
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  transition: background 0.2s;
+  line-height: 1;
+}
+
+.btn-cerrar-soporte:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.modal-body-soporte {
+  padding: 24px;
+}
+
+.info-soporte {
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.titulo-soporte {
+  font-size: 24px;
+  font-weight: 700;
+  color: #333;
+  margin: 0 0 12px 0;
+}
+
+.descripcion-soporte {
+  font-size: 16px;
+  color: #666;
+  line-height: 1.6;
+  margin: 0;
+}
+
+.opciones-soporte {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.opcion-soporte {
+  background: #f8f9fa;
+  border-radius: 12px;
+  padding: 20px;
+  border: 2px solid #e0e0e0;
+  transition: all 0.3s;
+}
+
+.opcion-soporte:hover {
+  border-color: #4DAAA7;
+  box-shadow: 0 4px 12px rgba(77, 170, 167, 0.15);
+}
+
+.opcion-soporte h4 {
+  margin: 0 0 12px 0;
+  font-size: 18px;
+  color: #333;
+  font-weight: 600;
+}
+
+.opcion-soporte p {
+  margin: 0 0 16px 0;
+  color: #666;
+  font-size: 14px;
+}
+
+.btn-whatsapp {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  width: 100%;
+  padding: 16px 24px;
+  background: linear-gradient(135deg, #25D366 0%, #128C7E 100%);
+  color: white;
+  border: none;
+  border-radius: 12px;
+  font-size: 18px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s;
+  box-shadow: 0 4px 12px rgba(37, 211, 102, 0.3);
+}
+
+.btn-whatsapp:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(37, 211, 102, 0.4);
+}
+
+.btn-whatsapp:active {
+  transform: translateY(0);
+}
+
+.btn-whatsapp svg {
+  width: 24px;
+  height: 24px;
+}
+
+.contacto-info {
+  background: white;
+  border-radius: 8px;
+  padding: 16px;
+  margin-top: 12px;
+}
+
+.contacto-info p {
+  margin: 8px 0;
+  font-size: 14px;
+  color: #333;
+}
+
+.contacto-info strong {
+  color: #4DAAA7;
+  font-weight: 600;
+}
+
+.faq-list {
+  list-style: none;
+  padding: 0;
+  margin: 12px 0;
+}
+
+.faq-list li {
+  padding: 10px 0;
+  border-bottom: 1px solid #e0e0e0;
+  color: #555;
+  font-size: 14px;
+}
+
+.faq-list li:last-child {
+  border-bottom: none;
+}
+
+.faq-list li:before {
+  content: "→ ";
+  color: #4DAAA7;
+  font-weight: bold;
+  margin-right: 8px;
+}
+
+.faq-nota {
+  font-size: 13px;
+  color: #888;
+  font-style: italic;
+  margin-top: 12px;
+}
+
+.modal-footer-soporte {
+  padding: 20px 24px;
+  border-top: 1px solid #e0e0e0;
+  display: flex;
+  justify-content: center;
+}
+
+.btn-cerrar-modal-soporte {
+  padding: 12px 32px;
+  background-color: #f5f5f5;
+  color: #666;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.btn-cerrar-modal-soporte:hover {
+  background-color: #e0e0e0;
+}
+
+@media (max-width: 600px) {
+  .modal-soporte {
+    max-width: 100%;
+    margin: 10px;
+    max-height: 95vh;
+  }
+
+  .modal-header-soporte {
+    padding: 20px;
+  }
+
+  .modal-header-soporte h3 {
+    font-size: 20px;
+  }
+
+  .modal-body-soporte {
+    padding: 20px;
+  }
+
+  .titulo-soporte {
+    font-size: 20px;
+  }
+
+  .descripcion-soporte {
+    font-size: 14px;
+  }
+
+  .opcion-soporte {
+    padding: 16px;
+  }
+
+  .opcion-soporte h4 {
+    font-size: 16px;
+  }
+
+  .btn-whatsapp {
+    padding: 14px 20px;
+    font-size: 16px;
+  }
+}

@@ -9,6 +9,7 @@ import VentasDiarias from './VentasDiarias.jsx';
 import CrearUsuario from './CrearUsuario.jsx';
 import EditarUsuarios from './EditarUsuarios.jsx';
 import CambiarPassword from './CambiarPassword.jsx';
+import SoporteAyuda from './SoporteAyuda.jsx';
 import './home.css';
 
 
@@ -41,6 +42,7 @@ const Home = ({ idDoc,
   const [ isCrearUsuario, setIsCrearUsuario ] = useState(false);
   const [ isEditarUsuarios, setIsEditarUsuarios ] = useState(false);
   const [ isCambiarPassword, setIsCambiarPassword ] = useState(false);
+  const [ isSoporteAyuda, setIsSoporteAyuda ] = useState(false);
 
   const [ numero, setNumero ] = useState(0);
   const [ idCodigo, setIdCodigo ] = useState(null);
@@ -221,6 +223,15 @@ const Home = ({ idDoc,
               }}
             >🔐 Cambiar Contraseña</button>
           </li>
+          <li>
+            <button
+              type='button'
+              onClick={() => {
+                setIsSoporteAyuda(true)
+                setIsOpenMenu(!isOpenMenu)
+              }}
+            >💬 Soporte y Ayuda</button>
+          </li>
         </ol>
       </section>
         <section>
@@ -228,6 +239,12 @@ const Home = ({ idDoc,
             isCambiarPassword &&
               <CambiarPassword 
                 onClose={() => setIsCambiarPassword(false)}
+              />
+          }
+          {
+            isSoporteAyuda &&
+              <SoporteAyuda 
+                onClose={() => setIsSoporteAyuda(false)}
               />
           }
           {
