@@ -79,17 +79,18 @@ const VentasDiarias = ({
   };
 
   const generarPDF = (detalle) => {
-    console.log('generarPDF - detalle recibido:', detalle);
-    console.log('generarPDF - detalle.nombreUsuario:', detalle.nombreUsuario);
+    // USAR EXACTAMENTE LA MISMA VARIABLE QUE EN LA INTERFAZ
+    console.log('PDF - usuarioSeleccionado:', usuarioSeleccionado);
+    console.log('PDF - usuarioSeleccionado.nombre_kiosco:', usuarioSeleccionado?.nombre_kiosco);
     
     const doc = new jsPDF();
     const fechaFormateada = `${detalle.fecha.slice(0,2)}-${detalle.fecha.slice(2,4)}-${detalle.fecha.slice(4,8)}`;
     const totalDelDia = detalle.ventas.reduce((acc, venta) => acc + venta.total, 0);
     
-    // Usar el nombre que viene en el detalle
-    const nombreUsuario = detalle.nombreUsuario || 'usuario';
-    const nombreArchivo = `ventas_${nombreUsuario}_${fechaFormateada}.pdf`;
-    console.log('generarPDF - Nombre del archivo:', nombreArchivo);
+    // USAR EXACTAMENTE: usuarioSeleccionado.nombre_kiosco (igual que línea 378)
+    const nombreVendedor = usuarioSeleccionado?.nombre_kiosco || 'usuario';
+    const nombreArchivo = `ventas_${nombreVendedor}_${fechaFormateada}.pdf`;
+    console.log('PDF - Nombre del archivo:', nombreArchivo);
     
     // Título
     doc.setFontSize(18);
@@ -102,10 +103,13 @@ const VentasDiarias = ({
     
     let yPosition = 25;
     
-    // Mostrar nombre del usuario que hizo las ventas
-    if (detalle.nombreUsuario && detalle.nombreUsuario !== 'Usuario') {
-      doc.text(`Ventas de: ${detalle.nombreUsuario}`, 14, yPosition);
+    // MOSTRAR EXACTAMENTE: "Ventas de: {usuarioSeleccionado.nombre_kiosco}"
+    if (usuarioSeleccionado?.nombre_kiosco) {
+      doc.text(`Ventas de: ${usuarioSeleccionado.nombre_kiosco}`, 14, yPosition);
+      console.log('PDF - Texto agregado:', `Ventas de: ${usuarioSeleccionado.nombre_kiosco}`);
       yPosition += 7;
+    } else {
+      console.log('PDF - NO SE AGREGÓ NOMBRE porque usuarioSeleccionado es:', usuarioSeleccionado);
     }
     
     doc.text(`Fecha: ${fechaFormateada}`, 14, yPosition);
@@ -375,6 +379,8 @@ const VentasDiarias = ({
             
             <h4 style={{marginBottom: '15px'}}>
               Ventas de: {usuarioSeleccionado.nombre_kiosco}
+              {console.log('INTERFAZ - usuarioSeleccionado:', usuarioSeleccionado)}
+              {console.log('INTERFAZ - nombre_kiosco:', usuarioSeleccionado.nombre_kiosco)}
             </h4>
             
             {cargando ? (
