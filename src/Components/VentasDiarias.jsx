@@ -71,10 +71,17 @@ const VentasDiarias = ({
   };
 
   const generarPDF = (detalle) => {
+    console.log('usuarioSeleccionado en generarPDF:', usuarioSeleccionado);
+    console.log('nombre_kiosco:', usuarioSeleccionado?.nombre_kiosco);
+    
     const doc = new jsPDF();
     const fechaFormateada = `${detalle.fecha.slice(0,2)}-${detalle.fecha.slice(2,4)}-${detalle.fecha.slice(4,8)}`;
     const totalDelDia = detalle.ventas.reduce((acc, venta) => acc + venta.total, 0);
-    const nombreArchivo = `ventas_${fechaFormateada}.pdf`;
+    
+    // Incluir nombre del usuario en el archivo
+    const nombreUsuario = usuarioSeleccionado?.nombre_kiosco || 'usuario';
+    const nombreArchivo = `ventas_${nombreUsuario}_${fechaFormateada}.pdf`;
+    console.log('Nombre del archivo:', nombreArchivo);
     
     // Título
     doc.setFontSize(18);
