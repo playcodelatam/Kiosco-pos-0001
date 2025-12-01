@@ -87,12 +87,10 @@ const VentasDiarias = ({
   const verDetalleVenta = (fechaOriginal) => {
     const ventasDelDia = ventasCompletasUsuario[fechaOriginal];
     
-    // Determinar nombre del usuario para el detalle
-    let nombreUsuario = 'Usuario';
+    // Solo incluir nombre si es admin
+    let nombreUsuario = null;
     if (rolUsuario === 'admin' && usuarioSeleccionado) {
       nombreUsuario = usuarioSeleccionado.nombre_kiosco || 'Usuario sin nombre';
-    } else {
-      nombreUsuario = nombreKioscoActual || usuarioLogueado?.displayName || 'Usuario';
     }
     
     setDetalleVenta({
@@ -117,17 +115,20 @@ const VentasDiarias = ({
     doc.setFont(undefined, 'bold');
     doc.text('DETALLE DE VENTAS', 105, 15, { align: 'center' });
     
-    // Usuario y Fecha
+    // Usuario (solo para admin) y Fecha
     doc.setFontSize(12);
     doc.setFont(undefined, 'normal');
     
-    // Usar el nombre que viene en el detalle
-    const nombreUsuario = detalle.nombreUsuario || 'Usuario';
+    let yPosition = 25;
     
-    doc.text(`Usuario: ${nombreUsuario}`, 14, 25);
-    doc.text(`Fecha: ${fechaFormateada}`, 14, 32);
+    // Mostrar nombre de usuario solo si es admin
+    if (detalle.nombreUsuario) {
+      doc.text(`Usuario: ${detalle.nombreUsuario}`, 14, yPosition);
+      yPosition += 7;
+    }
     
-    let yPosition = 42;
+    doc.text(`Fecha: ${fechaFormateada}`, 14, yPosition);
+    yPosition += 10;
     
     // Recorrer cada venta
     detalle.ventas.forEach((venta, idx) => {
