@@ -82,12 +82,19 @@ const VentasDiarias = ({
     doc.setFont(undefined, 'bold');
     doc.text('DETALLE DE VENTAS', 105, 15, { align: 'center' });
     
-    // Fecha
+    // Usuario y Fecha
     doc.setFontSize(12);
     doc.setFont(undefined, 'normal');
-    doc.text(`Fecha: ${fechaFormateada}`, 14, 25);
     
-    let yPosition = 35;
+    // Determinar nombre del usuario
+    const nombreUsuario = rolUsuario === 'admin' && usuarioSeleccionado
+      ? usuarioSeleccionado.nombre_kiosco || 'Usuario sin nombre'
+      : usuarioLogueado?.nombre_kiosco || 'Usuario';
+    
+    doc.text(`Usuario: ${nombreUsuario}`, 14, 25);
+    doc.text(`Fecha: ${fechaFormateada}`, 14, 32);
+    
+    let yPosition = 42;
     
     // Recorrer cada venta
     detalle.ventas.forEach((venta, idx) => {
