@@ -71,13 +71,6 @@ const VentasDiarias = ({
   };
 
   const generarPDF = (detalle) => {
-    console.log('=== GENERANDO PDF ===');
-    console.log('detalle:', detalle);
-    console.log('detalle.usuarioSeleccionado:', detalle.usuarioSeleccionado);
-    console.log('usuarioSeleccionado del estado:', usuarioSeleccionado);
-    console.log('usuarioSeleccionado.nombre_kiosco:', usuarioSeleccionado?.nombre_kiosco);
-    console.log('====================');
-    
     const doc = new jsPDF();
     const fechaFormateada = `${detalle.fecha.slice(0,2)}-${detalle.fecha.slice(2,4)}-${detalle.fecha.slice(4,8)}`;
     const totalDelDia = detalle.ventas.reduce((acc, venta) => acc + venta.total, 0);
@@ -94,9 +87,9 @@ const VentasDiarias = ({
     
     let yPosition = 25;
     
-    // Usar usuarioSeleccionado del estado directamente (igual que en "Ventas de:")
+    // Mostrar nombre del vendedor (igual que en el modal)
     if (usuarioSeleccionado && usuarioSeleccionado.nombre_kiosco) {
-      doc.text(`Vendedor: ${usuarioSeleccionado.nombre_kiosco}`, 14, yPosition);
+      doc.text(`Ventas de: ${usuarioSeleccionado.nombre_kiosco}`, 14, yPosition);
       yPosition += 7;
     }
     
@@ -214,7 +207,14 @@ const VentasDiarias = ({
       <div className='modal-overlay' onClick={onCerrar}>
         <div className='modal-detalle' onClick={(e) => e.stopPropagation()}>
           <div className='modal-header'>
-            <h3>Detalle de Ventas - {fechaFormateada}</h3>
+            <h3>
+              Detalle de Ventas - {fechaFormateada}
+              {usuarioSeleccionado && (
+                <span style={{fontSize: '14px', fontWeight: 'normal', color: '#666', marginLeft: '10px'}}>
+                  (Ventas de: {usuarioSeleccionado.nombre_kiosco})
+                </span>
+              )}
+            </h3>
             <button className='btn-cerrar' onClick={onCerrar}>✕</button>
           </div>
           
