@@ -15,40 +15,47 @@ export default defineConfig({
   plugins: [
     react(),
     VitePWA({
-      registerType: 'prompt', // no registra automáticamente el SW
-      injectRegister: false,  // evita que VitePWA inyecte el registro
-      workbox: undefined,     // desactiva la caché completamente
+      registerType: 'prompt',
+      injectRegister: false,
+      workbox: undefined,
       includeAssets: [
-        'favicon.ico',
-        'robots.txt',
-        'apple-touch-icon.png',
-        'icons/icon-192x192.png',
+        'img/logoKiosco.webp',
+        'icons/icon-192-192.png',
         'icons/icon-512x512.png'
       ],
       manifest: {
-        name: 'Kiosco',
-        short_name: 'Kiosco',
-        description: 'Una app para gestion de kiosco',
+        name: 'Kiosko POS',
+        short_name: 'Kiosko POS',
+        description: 'Sistema de Punto de Venta para Kioscos',
         start_url: '/',
         display: 'standalone',
-        background_color: '#ffffff',
-        theme_color: '#25D366',
+        background_color: '#4DAAA7',
+        theme_color: '#4DAAA7',
+        orientation: 'portrait-primary',
         icons: [
           {
-            src: '/icons/icon-192x192.png',
+            src: '/img/logoKiosco.webp',
             sizes: '192x192',
-            type: 'image/png'
+            type: 'image/webp',
+            purpose: 'any maskable'
           },
           {
-            src: '/icons/icon-512x512.png',
+            src: '/img/logoKiosco.webp',
             sizes: '512x512',
-            type: 'image/png'
+            type: 'image/webp',
+            purpose: 'any maskable'
+          },
+          {
+            src: '/icons/icon-192-192.png',
+            sizes: '192x192',
+            type: 'image/png',
+            purpose: 'any'
           },
           {
             src: '/icons/icon-512x512.png',
             sizes: '512x512',
             type: 'image/png',
-            purpose: 'any maskable'
+            purpose: 'any'
           }
         ]
       }

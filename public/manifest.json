@@ -1,0 +1,54 @@
+{
+  "name": "Kiosko POS",
+  "short_name": "Kiosko POS",
+  "description": "Sistema de Punto de Venta para Kioscos",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#4DAAA7",
+  "theme_color": "#4DAAA7",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "/img/logoKiosco.webp",
+      "sizes": "192x192",
+      "type": "image/webp",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/img/logoKiosco.webp",
+      "sizes": "512x512",
+      "type": "image/webp",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/icons/icon-192-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/icon-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    }
+  ],
+  "categories": ["business", "productivity", "finance"],
+  "screenshots": [],
+  "shortcuts": [
+    {
+      "name": "Caja",
+      "short_name": "Caja",
+      "description": "Abrir caja para ventas",
+      "url": "/?view=caja",
+      "icons": []
+    },
+    {
+      "name": "Productos",
+      "short_name": "Productos",
+      "description": "Ver lista de productos",
+      "url": "/?view=productos",
+      "icons": []
+    }
+  ]
+}
