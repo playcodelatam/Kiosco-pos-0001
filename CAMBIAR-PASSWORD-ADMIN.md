@@ -1,10 +1,39 @@
 # 🔐 CAMBIAR CONTRASEÑA DEL ADMINISTRADOR
 
-Guía para cambiar la contraseña del usuario admin directamente desde Firebase Console sin enviar emails.
+Guía para cambiar la contraseña del usuario admin.
 
 ---
 
-## 📋 MÉTODO 1: Firebase Console (Recomendado)
+## 📋 MÉTODO 1: Desde la App (Más Fácil) ⭐
+
+### Paso 1: Logear como admin
+1. Abre la app
+2. Inicia sesión con:
+   - Email: `admin@kiosko.com`
+   - Contraseña: `pos1982*` (o la actual)
+
+### Paso 2: Abrir menú
+1. Click en el botón **hamburguesa (☰)** en la esquina superior derecha
+2. Busca la opción **"🔐 Cambiar Contraseña"**
+3. Click en ella
+
+### Paso 3: Cambiar contraseña
+1. Ingresa tu **contraseña actual**
+2. Ingresa la **nueva contraseña** (mínimo 6 caracteres)
+3. **Confirma** la nueva contraseña
+4. Click en **"Cambiar Contraseña"**
+5. ✅ Listo! La contraseña se cambió exitosamente
+
+### Ventajas de este método:
+- ✅ No necesitas acceder a Firebase Console
+- ✅ No envía emails
+- ✅ Cambio inmediato
+- ✅ Validación en tiempo real
+- ✅ Disponible para todos los usuarios
+
+---
+
+## 📋 MÉTODO 2: Firebase Console (Alternativo)
 
 ### Paso 1: Acceder a Firebase Console
 1. Ve a [Firebase Console](https://console.firebase.google.com)
@@ -21,13 +50,8 @@ Guía para cambiar la contraseña del usuario admin directamente desde Firebase 
 
 ### Paso 4: Cambiar contraseña
 1. En el menú desplegable, selecciona **"Reset password"** o **"Restablecer contraseña"**
-2. **IMPORTANTE**: Aparecerá un modal con dos opciones:
-   - ❌ "Send password reset email" (NO uses esta)
-   - ✅ "Set password manually" o "Establecer contraseña manualmente" (USA ESTA)
-
-3. Selecciona **"Set password manually"**
-4. Ingresa la nueva contraseña (mínimo 6 caracteres)
-5. Click en **"Save"** o **"Guardar"**
+2. **NOTA**: Firebase Console ahora solo ofrece enviar email de restablecimiento
+3. Si necesitas cambiar sin email, usa el **Método 1 (desde la app)**
 
 ### Paso 5: Verificar
 1. Cierra sesión en la app

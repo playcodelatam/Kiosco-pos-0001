@@ -8,6 +8,7 @@ import ProdMasVendido from './ProdMasVendido.jsx';
 import VentasDiarias from './VentasDiarias.jsx';
 import CrearUsuario from './CrearUsuario.jsx';
 import EditarUsuarios from './EditarUsuarios.jsx';
+import CambiarPassword from './CambiarPassword.jsx';
 import './home.css';
 
 
@@ -39,6 +40,7 @@ const Home = ({ idDoc,
   const [ isVentasDiarias, setIsVentasDiarias ] = useState(false);
   const [ isCrearUsuario, setIsCrearUsuario ] = useState(false);
   const [ isEditarUsuarios, setIsEditarUsuarios ] = useState(false);
+  const [ isCambiarPassword, setIsCambiarPassword ] = useState(false);
 
   const [ numero, setNumero ] = useState(0);
   const [ idCodigo, setIdCodigo ] = useState(null);
@@ -210,9 +212,24 @@ const Home = ({ idDoc,
               </li>
             </>
           )}
+          <li>
+            <button
+              type='button'
+              onClick={() => {
+                setIsCambiarPassword(true)
+                setIsOpenMenu(!isOpenMenu)
+              }}
+            >🔐 Cambiar Contraseña</button>
+          </li>
         </ol>
       </section>
         <section>
+          {
+            isCambiarPassword &&
+              <CambiarPassword 
+                onClose={() => setIsCambiarPassword(false)}
+              />
+          }
           {
             isVentasDiarias &&
               <VentasDiarias 
