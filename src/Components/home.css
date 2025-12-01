@@ -18,8 +18,10 @@
 header {  
   background: var(--primary);
   color: white;
-  text-align: center;
+  text-align: left;
+  padding-left: 20px;
   box-shadow: 0 0 4px black;
+  position: relative;
 }
 main {
   flex-grow: 1;
