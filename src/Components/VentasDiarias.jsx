@@ -137,6 +137,18 @@ const VentasDiarias = ({
       // Total de la venta
       doc.setFont(undefined, 'bold');
       doc.text(`Total venta: $${venta.total.toLocaleString('es-AR')}`, 14, yPosition);
+      
+      // Cambio y Vuelto (si existen)
+      if (venta.cambio && venta.cambio > 0) {
+        yPosition += 5;
+        doc.setFont(undefined, 'normal');
+        doc.text(`Cambio: $${venta.cambio.toLocaleString('es-AR')}`, 14, yPosition);
+        
+        if (venta.vuelto && venta.vuelto > 0) {
+          doc.text(`Vuelto: $${venta.vuelto.toLocaleString('es-AR')}`, 80, yPosition);
+        }
+      }
+      
       doc.setFont(undefined, 'normal');
       
       yPosition += 10;

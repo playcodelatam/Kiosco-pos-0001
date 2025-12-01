@@ -190,6 +190,8 @@ const cobrar = async () => {
         cantidad: cantidad,
         mtPago: mdPago || 'Efectivo',
         interes: interes || '0',
+        cambio: vueltoPuro || 0,
+        vuelto: vueltoPuro > 0 ? vueltoPuro - totalConInteres : 0,
         total: totalConInteres 
       } 
     ]
@@ -209,6 +211,8 @@ const cobrar = async () => {
         cantidad: cantidad,
         mtPago: mdPago || 'Efectivo',
         interes: interes || '0',
+        cambio: vueltoPuro || 0,
+        vuelto: vueltoPuro > 0 ? vueltoPuro - totalConInteres : 0,
         total: totalConInteres 
       }   
   
