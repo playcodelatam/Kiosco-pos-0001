@@ -21,16 +21,6 @@ const VentasDiarias = ({
   const esPWA = window.matchMedia('(display-mode: standalone)').matches || 
                 window.navigator.standalone || 
                 document.referrer.includes('android-app://');
-  
-  // Debug: mostrar información de detección
-  console.log('=== DEBUG PWA ===');
-  console.log('display-mode standalone:', window.matchMedia('(display-mode: standalone)').matches);
-  console.log('navigator.standalone:', window.navigator.standalone);
-  console.log('referrer:', document.referrer);
-  console.log('esPWA:', esPWA);
-  console.log('navigator.share disponible:', !!navigator.share);
-  console.log('navigator.canShare disponible:', !!navigator.canShare);
-  console.log('================');
 
   // Cargar lista de usuarios si es admin
   useEffect(() => {
@@ -191,43 +181,25 @@ const VentasDiarias = ({
     doc.text(`TOTAL DEL DÍA: $${totalDelDia.toLocaleString('es-AR')}`, 105, yPosition, { align: 'center' });
     
     // Verificar si Web Share API está disponible (PWA/móvil)
-    console.log('=== INTENTANDO COMPARTIR PDF ===');
-    console.log('navigator.share:', !!navigator.share);
-    console.log('navigator.canShare:', !!navigator.canShare);
-    
     if (navigator.share && navigator.canShare) {
       try {
         // Generar PDF como Blob
         const pdfBlob = doc.output('blob');
         const pdfFile = new File([pdfBlob], nombreArchivo, { type: 'application/pdf' });
         
-        console.log('PDF File creado:', pdfFile.name, pdfFile.type, pdfFile.size);
-        
         // Verificar si se puede compartir el archivo
-        const puedeCompartir = navigator.canShare({ files: [pdfFile] });
-        console.log('Puede compartir archivo:', puedeCompartir);
-        
-        if (puedeCompartir) {
-          console.log('Abriendo diálogo de compartir...');
+        if (navigator.canShare({ files: [pdfFile] })) {
           await navigator.share({
             title: 'Detalle de Ventas',
             text: `Ventas del día ${fechaFormateada}`,
             files: [pdfFile]
           });
-          console.log('PDF compartido exitosamente');
           return;
-        } else {
-          console.log('No se puede compartir el archivo, usando descarga');
         }
       } catch (error) {
-        console.log('Error al compartir:', error.name, error.message);
-        // Si falla, continuar con descarga normal
+        // Si falla o usuario cancela, continuar con descarga normal
       }
-    } else {
-      console.log('Web Share API no disponible');
     }
-    
-    console.log('Descargando PDF normalmente...');
     
     // Descarga normal (fallback para desktop o si share falla)
     doc.save(nombreArchivo);
