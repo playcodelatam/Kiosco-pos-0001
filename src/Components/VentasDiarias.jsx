@@ -59,10 +59,18 @@ const VentasDiarias = ({
   const verDetalleVenta = (fechaOriginal) => {
     const ventasDelDia = ventasCompletasUsuario[fechaOriginal];
     
+    // Obtener el nombre del usuario AHORA, cuando se abre el modal
+    const nombreUsuario = usuarioSeleccionado?.nombre_kiosco || 
+                         usuarioSeleccionado?.email || 
+                         'Usuario';
+    
+    console.log('verDetalleVenta - usuarioSeleccionado:', usuarioSeleccionado);
+    console.log('verDetalleVenta - nombreUsuario extraído:', nombreUsuario);
+    
     setDetalleVenta({
       fecha: fechaOriginal,
       ventas: ventasDelDia,
-      usuarioSeleccionado: usuarioSeleccionado // Pasar el usuario completo
+      nombreUsuario: nombreUsuario // Pasar el nombre directamente
     });
   };
 
@@ -71,17 +79,17 @@ const VentasDiarias = ({
   };
 
   const generarPDF = (detalle) => {
-    console.log('usuarioSeleccionado en generarPDF:', usuarioSeleccionado);
-    console.log('nombre_kiosco:', usuarioSeleccionado?.nombre_kiosco);
+    console.log('generarPDF - detalle recibido:', detalle);
+    console.log('generarPDF - detalle.nombreUsuario:', detalle.nombreUsuario);
     
     const doc = new jsPDF();
     const fechaFormateada = `${detalle.fecha.slice(0,2)}-${detalle.fecha.slice(2,4)}-${detalle.fecha.slice(4,8)}`;
     const totalDelDia = detalle.ventas.reduce((acc, venta) => acc + venta.total, 0);
     
-    // Incluir nombre del usuario en el archivo
-    const nombreUsuario = usuarioSeleccionado?.nombre_kiosco || 'usuario';
+    // Usar el nombre que viene en el detalle
+    const nombreUsuario = detalle.nombreUsuario || 'usuario';
     const nombreArchivo = `ventas_${nombreUsuario}_${fechaFormateada}.pdf`;
-    console.log('Nombre del archivo:', nombreArchivo);
+    console.log('generarPDF - Nombre del archivo:', nombreArchivo);
     
     // Título
     doc.setFontSize(18);
@@ -94,9 +102,9 @@ const VentasDiarias = ({
     
     let yPosition = 25;
     
-    // Mostrar nombre del vendedor (igual que en el modal)
-    if (usuarioSeleccionado && usuarioSeleccionado.nombre_kiosco) {
-      doc.text(`Ventas de: ${usuarioSeleccionado.nombre_kiosco}`, 14, yPosition);
+    // Mostrar nombre del usuario que hizo las ventas
+    if (detalle.nombreUsuario && detalle.nombreUsuario !== 'Usuario') {
+      doc.text(`Ventas de: ${detalle.nombreUsuario}`, 14, yPosition);
       yPosition += 7;
     }
     
@@ -216,9 +224,9 @@ const VentasDiarias = ({
           <div className='modal-header'>
             <h3>
               Detalle de Ventas - {fechaFormateada}
-              {usuarioSeleccionado && (
+              {detalle.nombreUsuario && detalle.nombreUsuario !== 'Usuario' && (
                 <span style={{fontSize: '14px', fontWeight: 'normal', color: '#666', marginLeft: '10px'}}>
-                  (Ventas de: {usuarioSeleccionado.nombre_kiosco})
+                  (Ventas de: {detalle.nombreUsuario})
                 </span>
               )}
             </h3>
