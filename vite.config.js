@@ -24,9 +24,9 @@ export default defineConfig({
         'icons/icon-512x512.png'
       ],
       manifest: {
-        name: 'Kiosko POS',
-        short_name: 'Kiosko POS',
-        description: 'Sistema de Punto de Venta para Kioscos',
+        name: 'Admin POS',
+        short_name: 'Admin POS',
+        description: 'Sistema de Punto de Venta - Administración y Gestión',
         start_url: '/',
         display: 'standalone',
         background_color: '#4DAAA7',

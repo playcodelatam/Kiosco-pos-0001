@@ -61,7 +61,7 @@ const Home = ({ idDoc,
   return (
     <div className="contenedor">
       <header>
-        <h1>KIOSCO</h1>
+        <h1>ADMIN POS</h1>
         <div style={{
           position: 'absolute',
           top: '10px',
@@ -309,7 +309,7 @@ const Home = ({ idDoc,
         </section>
       </main>
       <footer>
-        <p>Kiosco App Version 2.0</p>
+        <p>Admin POS Versión 3.0</p>
       </footer>
       
       {/* Modal para crear usuario (solo admin) */}
