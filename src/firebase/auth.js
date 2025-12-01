@@ -3,7 +3,9 @@ import { GoogleAuthProvider,
          signOut,
          signInWithEmailAndPassword,
          createUserWithEmailAndPassword, 
-         updateProfile } from "firebase/auth";
+         updateProfile,
+         setPersistence,
+         browserLocalPersistence } from "firebase/auth";
 
 import { collection,
          onSnapshot, 
@@ -80,6 +82,9 @@ export const inicializarAdmin = async () => {
 
 export const loginWhihtGoogle = async () => {
   try {
+    // Configurar persistencia explícita antes de hacer login
+    await setPersistence(auth, browserLocalPersistence);
+    
     // 1. INICIAR SESIÓN CON GOOGLE
     const result = await signInWithPopup(auth, provider);
     const user = result.user;
@@ -114,6 +119,9 @@ export const loginWhihtGoogle = async () => {
 // Login con mail y contraseña
 export const loginConMail = async(dataUser) => {
   try {
+    // Configurar persistencia explícita antes de hacer login
+    await setPersistence(auth, browserLocalPersistence);
+    
     const userLogin = await signInWithEmailAndPassword(auth, dataUser.correo, dataUser.password);
     const user = userLogin.user;
     

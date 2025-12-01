@@ -10,11 +10,12 @@ function App() {
  
   const [ isHome, setIsHome ] = useState(false);
   const [ isLogin, setIsLogin ] = useState(true)
-  const [ usuarioLogueado, setUsuarioLogueado ] = useState(null); // Muestra datos del usuario logedo
+  const [ usuarioLogueado, setUsuarioLogueado ] = useState(null);
   const [ errorUsuario, setErrorUsuario ] = useState(false);
   const [ ventaDiaria, setVentaDiaria ] = useState([]);
   const [ masVendido, setMasVendido ] = useState([])
-  const [ rolUsuario, setRolUsuario ] = useState('user'); // Rol del usuario (admin/user)
+  const [ rolUsuario, setRolUsuario ] = useState('user');
+  const [ authLoading, setAuthLoading ] = useState(true); // Estado de carga de autenticación
   
   const productosParaCobrar = localStorage.getItem('cobrar-kiosco')
   const [ carrito, setCarrito ] = useState(productosParaCobrar ? JSON.parse(productosParaCobrar) : [])
@@ -143,19 +144,58 @@ const productoMasVendido = () => {
   setMasVendido(productosAgregados)
 }
 
-  // Detecta si se loguea o sale.
-  onAuthStateChanged( auth, ( user ) => {
-    if(user){
-      setUsuarioLogueado(user);
-      setIsLogin(false);
-      setIsHome(true);
-    }else{
-      setIsHome(false);
-      setIsLogin(true);
-    }
-  })
+  // Detectar estado de autenticación
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      if (user) {
+        setUsuarioLogueado(user);
+        setIsLogin(false);
+        setIsHome(true);
+      } else {
+        setUsuarioLogueado(null);
+        setIsHome(false);
+        setIsLogin(true);
+      }
+      // Terminar loading después de verificar
+      setAuthLoading(false);
+    });
+
+    // Cleanup
+    return () => unsubscribe();
+  }, []);
 
   
+  // Mostrar pantalla de carga mientras se verifica autenticación
+  if (authLoading) {
+    return (
+      <div style={{
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'center',
+        alignItems: 'center',
+        height: '100vh',
+        backgroundColor: '#1a1a2e',
+        color: '#fff'
+      }}>
+        <div style={{
+          width: '50px',
+          height: '50px',
+          border: '5px solid #4ecdc4',
+          borderTop: '5px solid transparent',
+          borderRadius: '50%',
+          animation: 'spin 1s linear infinite'
+        }}></div>
+        <p style={{marginTop: '20px', fontSize: '18px'}}>Cargando Kiosco...</p>
+        <style>{`
+          @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+          }
+        `}</style>
+      </div>
+    );
+  }
+
   return (
     <>
       {
