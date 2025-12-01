@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { obtenerTodosLosUsuarios, obtenerVentasUsuario } from '../firebase/auth.js';
+import { doc, getDoc } from 'firebase/firestore';
+import { db } from '../firebase/config.js';
 import { jsPDF } from 'jspdf';
 import autoTable from 'jspdf-autotable';
 import './ventasDiarias.css';
@@ -16,11 +18,34 @@ const VentasDiarias = ({
   const [cargando, setCargando] = useState(false);
   const [detalleVenta, setDetalleVenta] = useState(null);
   const [ventasCompletasUsuario, setVentasCompletasUsuario] = useState({});
+  const [nombreKioscoActual, setNombreKioscoActual] = useState(null);
   
   // Detectar si está en PWA
   const esPWA = window.matchMedia('(display-mode: standalone)').matches || 
                 window.navigator.standalone || 
                 document.referrer.includes('android-app://');
+
+  // Cargar nombre del kiosco del usuario actual
+  useEffect(() => {
+    const cargarNombreKiosco = async () => {
+      if (usuarioLogueado?.uid) {
+        try {
+          const userDocRef = doc(db, 'kioscos', usuarioLogueado.uid);
+          const docSnap = await getDoc(userDocRef);
+          if (docSnap.exists()) {
+            setNombreKioscoActual(docSnap.data().nombre_kiosco || usuarioLogueado.displayName || 'Usuario');
+          } else {
+            setNombreKioscoActual(usuarioLogueado.displayName || 'Usuario');
+          }
+        } catch (error) {
+          console.error('Error al obtener nombre del kiosco:', error);
+          setNombreKioscoActual(usuarioLogueado.displayName || 'Usuario');
+        }
+      }
+    };
+    
+    cargarNombreKiosco();
+  }, [usuarioLogueado]);
 
   // Cargar lista de usuarios si es admin
   useEffect(() => {
@@ -87,9 +112,15 @@ const VentasDiarias = ({
     doc.setFont(undefined, 'normal');
     
     // Determinar nombre del usuario
-    const nombreUsuario = rolUsuario === 'admin' && usuarioSeleccionado
-      ? usuarioSeleccionado.nombre_kiosco || 'Usuario sin nombre'
-      : usuarioLogueado?.nombre_kiosco || 'Usuario';
+    let nombreUsuario = 'Usuario';
+    
+    if (rolUsuario === 'admin' && usuarioSeleccionado) {
+      // Admin viendo ventas de otro usuario
+      nombreUsuario = usuarioSeleccionado.nombre_kiosco || 'Usuario sin nombre';
+    } else {
+      // Usuario viendo sus propias ventas
+      nombreUsuario = nombreKioscoActual || usuarioLogueado?.displayName || 'Usuario';
+    }
     
     doc.text(`Usuario: ${nombreUsuario}`, 14, 25);
     doc.text(`Fecha: ${fechaFormateada}`, 14, 32);
