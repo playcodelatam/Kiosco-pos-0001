@@ -59,18 +59,9 @@ const VentasDiarias = ({
   const verDetalleVenta = (fechaOriginal) => {
     const ventasDelDia = ventasCompletasUsuario[fechaOriginal];
     
-    // Obtener el nombre del usuario AHORA, cuando se abre el modal
-    const nombreUsuario = usuarioSeleccionado?.nombre_kiosco || 
-                         usuarioSeleccionado?.email || 
-                         'Usuario';
-    
-    console.log('verDetalleVenta - usuarioSeleccionado:', usuarioSeleccionado);
-    console.log('verDetalleVenta - nombreUsuario extraído:', nombreUsuario);
-    
     setDetalleVenta({
       fecha: fechaOriginal,
-      ventas: ventasDelDia,
-      nombreUsuario: nombreUsuario // Pasar el nombre directamente
+      ventas: ventasDelDia
     });
   };
 
@@ -78,19 +69,14 @@ const VentasDiarias = ({
     setDetalleVenta(null);
   };
 
-  const generarPDF = (detalle) => {
-    // USAR EXACTAMENTE LA MISMA VARIABLE QUE EN LA INTERFAZ
-    console.log('PDF - usuarioSeleccionado:', usuarioSeleccionado);
-    console.log('PDF - usuarioSeleccionado.nombre_kiosco:', usuarioSeleccionado?.nombre_kiosco);
-    
+  const generarPDF = (detalle, usuario) => {
     const doc = new jsPDF();
     const fechaFormateada = `${detalle.fecha.slice(0,2)}-${detalle.fecha.slice(2,4)}-${detalle.fecha.slice(4,8)}`;
     const totalDelDia = detalle.ventas.reduce((acc, venta) => acc + venta.total, 0);
     
-    // USAR EXACTAMENTE: usuarioSeleccionado.nombre_kiosco (igual que línea 378)
-    const nombreVendedor = usuarioSeleccionado?.nombre_kiosco || 'usuario';
+    // Obtener nombre del usuario pasado como parámetro
+    const nombreVendedor = usuario?.nombre_kiosco || 'usuario';
     const nombreArchivo = `ventas_${nombreVendedor}_${fechaFormateada}.pdf`;
-    console.log('PDF - Nombre del archivo:', nombreArchivo);
     
     // Título
     doc.setFontSize(18);
@@ -103,13 +89,10 @@ const VentasDiarias = ({
     
     let yPosition = 25;
     
-    // MOSTRAR EXACTAMENTE: "Ventas de: {usuarioSeleccionado.nombre_kiosco}"
-    if (usuarioSeleccionado?.nombre_kiosco) {
-      doc.text(`Ventas de: ${usuarioSeleccionado.nombre_kiosco}`, 14, yPosition);
-      console.log('PDF - Texto agregado:', `Ventas de: ${usuarioSeleccionado.nombre_kiosco}`);
+    // Mostrar nombre del vendedor si existe
+    if (usuario?.nombre_kiosco) {
+      doc.text(`Ventas de: ${usuario.nombre_kiosco}`, 14, yPosition);
       yPosition += 7;
-    } else {
-      console.log('PDF - NO SE AGREGÓ NOMBRE porque usuarioSeleccionado es:', usuarioSeleccionado);
     }
     
     doc.text(`Fecha: ${fechaFormateada}`, 14, yPosition);
@@ -170,26 +153,15 @@ const VentasDiarias = ({
       doc.setFont(undefined, 'bold');
       doc.text(`Total venta: $${venta.total.toLocaleString('es-AR')}`, 14, yPosition);
       
-      console.log(`Venta #${idx + 1}:`, {
-        total: venta.total,
-        cambio: venta.cambio,
-        vuelto: venta.vuelto,
-        mtPago: venta.mtPago
-      });
-      
       // Cambio y Vuelto (si existen)
       if (venta.cambio && venta.cambio > 0) {
         yPosition += 5;
         doc.setFont(undefined, 'normal');
         doc.text(`Cambio: $${venta.cambio.toLocaleString('es-AR')}`, 14, yPosition);
-        console.log(`✓ Agregado Cambio: $${venta.cambio}`);
         
         if (venta.vuelto && venta.vuelto > 0) {
           doc.text(`Vuelto: $${venta.vuelto.toLocaleString('es-AR')}`, 80, yPosition);
-          console.log(`✓ Agregado Vuelto: $${venta.vuelto}`);
         }
-      } else {
-        console.log(`✗ NO se agregó cambio/vuelto - cambio: ${venta.cambio}, vuelto: ${venta.vuelto}`);
       }
       
       doc.setFont(undefined, 'normal');
@@ -237,14 +209,7 @@ const VentasDiarias = ({
       <div className='modal-overlay' onClick={onCerrar}>
         <div className='modal-detalle' onClick={(e) => e.stopPropagation()}>
           <div className='modal-header'>
-            <h3>
-              Detalle de Ventas - {fechaFormateada}
-              {detalle.nombreUsuario && detalle.nombreUsuario !== 'Usuario' && (
-                <span style={{fontSize: '14px', fontWeight: 'normal', color: '#666', marginLeft: '10px'}}>
-                  (Ventas de: {detalle.nombreUsuario})
-                </span>
-              )}
-            </h3>
+            <h3>Detalle de Ventas - {fechaFormateada}</h3>
             <button className='btn-cerrar' onClick={onCerrar}>✕</button>
           </div>
           
@@ -319,7 +284,7 @@ const VentasDiarias = ({
             </div>
             <button 
               className='btn-descargar-pdf'
-              onClick={() => generarPDF(detalle)}
+              onClick={() => generarPDF(detalle, usuarioSeleccionado)}
               title='Descargar PDF'
             >
               <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="white">
@@ -390,8 +355,6 @@ const VentasDiarias = ({
             
             <h4 style={{marginBottom: '15px'}}>
               Ventas de: {usuarioSeleccionado.nombre_kiosco}
-              {console.log('INTERFAZ - usuarioSeleccionado:', usuarioSeleccionado)}
-              {console.log('INTERFAZ - nombre_kiosco:', usuarioSeleccionado.nombre_kiosco)}
             </h4>
             
             {cargando ? (
