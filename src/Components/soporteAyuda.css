@@ -27,8 +27,8 @@
   justify-content: space-between;
   align-items: center;
   padding: 24px;
-  border-bottom: 2px solid #4DAAA7;
-  background: linear-gradient(135deg, #4DAAA7 0%, #3F8F8B 100%);
+  border-bottom: 2px solid #007bff;
+  background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
   color: white;
   border-radius: 16px 16px 0 0;
 }
@@ -98,7 +98,7 @@
 }
 
 .opcion-soporte:hover {
-  border-color: #4DAAA7;
+  border-color: #007bff;
   box-shadow: 0 4px 12px rgba(77, 170, 167, 0.15);
 }
 
@@ -161,7 +161,7 @@
 }
 
 .contacto-info strong {
-  color: #4DAAA7;
+  color: #007bff;
   font-weight: 600;
 }
 
@@ -184,7 +184,7 @@
 
 .faq-list li:before {
   content: "→ ";
-  color: #4DAAA7;
+  color: #007bff;
   font-weight: bold;
   margin-right: 8px;
 }

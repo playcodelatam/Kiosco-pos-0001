@@ -13,8 +13,8 @@
     justify-content: space-between;
     align-items: center;
     padding: 20px;
-    border-bottom: 2px solid #4DAAA7;
-    background: linear-gradient(135deg, #4DAAA7 0%, #3F8F8B 100%);
+    border-bottom: 2px solid #007bff;
+    background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
     color: white;
     border-radius: 12px 12px 0 0;
     position: sticky;
@@ -64,7 +64,7 @@
 }
 
 .tarjeta-usuario:hover {
-    border-color: #4DAAA7;
+    border-color: #007bff;
     background: rgba(77, 170, 167, 0.05);
     transform: translateX(5px);
 }
@@ -136,7 +136,7 @@
 
 .campo-edicion input:focus {
     outline: none;
-    border-color: #4DAAA7;
+    border-color: #007bff;
 }
 
 .error-mensaje {
@@ -208,7 +208,7 @@
 }
 
 .btn-guardar-edicion {
-    background: linear-gradient(135deg, #4DAAA7 0%, #3F8F8B 100%);
+    background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
     color: white;
 }
 

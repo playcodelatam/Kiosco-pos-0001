@@ -50,13 +50,13 @@
 }
 
 .card-usuario {
-    background: linear-gradient(135deg, #4DAAA7 0%, #3F8F8B 100%);
+    background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
     color: white;
     border: none;
 }
 
 .card-usuario:hover {
-    background: linear-gradient(135deg, #3F8F8B 0%, #4DAAA7 100%);
+    background: linear-gradient(135deg, #0056b3 0%, #007bff 100%);
 }
 
 .card-usuario p {
@@ -100,8 +100,8 @@
     justify-content: space-between;
     align-items: center;
     padding: 20px;
-    border-bottom: 2px solid #4DAAA7;
-    background: linear-gradient(135deg, #4DAAA7 0%, #3F8F8B 100%);
+    border-bottom: 2px solid #007bff;
+    background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
     color: white;
     border-radius: 12px 12px 0 0;
 }
@@ -151,7 +151,7 @@
     align-items: center;
     margin-bottom: 15px;
     padding-bottom: 10px;
-    border-bottom: 2px solid #4DAAA7;
+    border-bottom: 2px solid #007bff;
 }
 
 .venta-header h4 {
@@ -160,7 +160,7 @@
 }
 
 .metodo-pago {
-    background: #4ecdc4;
+    background: #007bff;
     color: white;
     padding: 5px 12px;
     border-radius: 20px;
@@ -220,7 +220,7 @@
 }
 
 .cantidad {
-    background: #3F8F8B;
+    background: #0056b3;
     color: white;
     padding: 3px 8px;
     border-radius: 12px;
@@ -273,7 +273,7 @@
     position: absolute;
     bottom: 20px;
     right: 20px;
-    background: linear-gradient(135deg, #4DAAA7 0%, #3F8F8B 100%);
+    background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
     border: none;
     border-radius: 50%;
     width: 50px;
@@ -289,7 +289,7 @@
 .btn-descargar-pdf:hover {
     transform: scale(1.1);
     box-shadow: 0 6px 20px rgba(77, 170, 167, 0.6);
-    background: linear-gradient(135deg, #3F8F8B 0%, #4DAAA7 100%);
+    background: linear-gradient(135deg, #0056b3 0%, #007bff 100%);
 }
 
 .btn-descargar-pdf:active {
