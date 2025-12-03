@@ -426,7 +426,7 @@ const cobrar = async () => {
         <p>Cantidad:
           <span>{cantidad}</span>
         </p>
-        <p style={{color: 'yellow', fontSize:'30px'}}>Total
+        <p style={{color: 'yellow', fontSize:'36px'}}>Total
           <span>
           {
             Number(totalConInteres).toLocaleString('es-AR', {
@@ -439,7 +439,7 @@ const cobrar = async () => {
         </span>
         </p>
         {interes && Number(interes) > 0 && (
-          <p style={{color: '#ccc', fontSize:'14px', marginTop: '-10px'}}>
+          <p style={{color: '#ccc', fontSize:'17px', marginTop: '-10px'}}>
             Subtotal: {Number(subtotal).toLocaleString('es-AR', {
               style: 'currency',
               currency: 'ARS',
