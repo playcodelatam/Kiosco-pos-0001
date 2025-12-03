@@ -54,6 +54,30 @@
   align-items: center;
 }
 
+.contenedor-img-mobile {
+  width: 150px;
+  height: 150px;
+  margin-bottom: 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.contenedor-img-mobile img {
+  width: 100%;
+  height: auto;
+  object-fit: contain;
+}
+
+.titulo-login {
+  font-family: 'Roboto', sans-serif;
+  font-size: 32px;
+  color: white;
+  font-weight: 700;
+  margin-bottom: 30px;
+  text-align: center;
+}
+
 .form-login {  
   gap: 10px;
 }

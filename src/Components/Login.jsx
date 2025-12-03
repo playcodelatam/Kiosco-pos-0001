@@ -42,7 +42,10 @@ const Login = ({
         </div>
         <div className='aside-der'>
           <div className='contenedor-form-login'>
-            <h2>INGRESAR</h2>
+            <div className='contenedor-img-mobile'>
+              <img src='./img/logoKiosco.webp' alt="Logo" />
+            </div>
+            <h2 className='titulo-login'>Admin POS</h2>
             <form
               className='form-login'
               onSubmit={handleSubmit(ingresar)}
