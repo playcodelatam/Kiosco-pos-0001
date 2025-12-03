@@ -108,13 +108,27 @@ const Lector = ({
       }
 
       // Proceso de captura del frame y escaneo
+      // Solo escanear la zona central (donde está la línea roja)
       const canvas = document.createElement('canvas');
       const ctx = canvas.getContext('2d');
       const w = video.videoWidth;
       const h = video.videoHeight;
-      canvas.width = w;
-      canvas.height = h;
-      ctx.drawImage(video, 0, 0, w, h);
+      
+      // Definir zona de escaneo (centro del video, 80% ancho, 30% alto)
+      const scanWidth = w * 0.8;
+      const scanHeight = h * 0.3;
+      const scanX = (w - scanWidth) / 2;
+      const scanY = (h - scanHeight) / 2;
+      
+      canvas.width = scanWidth;
+      canvas.height = scanHeight;
+      
+      // Dibujar solo la zona de escaneo
+      ctx.drawImage(
+        video,
+        scanX, scanY, scanWidth, scanHeight,  // Zona de origen
+        0, 0, scanWidth, scanHeight            // Zona de destino
+      );
 
       try {
         let code = null;
@@ -163,8 +177,15 @@ const Lector = ({
 
   return (
     <div className="container-lector">
-      {/* Añadido 'muted' para evitar restricciones de autoPlay del navegador */}
-      <video ref={videoRef} autoPlay playsInline muted></video>
+      <div className="video-container">
+        {/* Añadido 'muted' para evitar restricciones de autoPlay del navegador */}
+        <video ref={videoRef} autoPlay playsInline muted></video>
+        {/* Línea roja de guía para escaneo */}
+        <div className="scan-line"></div>
+        <div className="scan-overlay">
+          <div className="scan-area"></div>
+        </div>
+      </div>
       <div className="resultado-scan" ref={resultRef}>Esperando código...</div>
       <button
         className="btn-scann"

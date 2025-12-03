@@ -4,20 +4,130 @@
   position: fixed;
   top: 0;
   left: 0;
-  background-color: rgba(128, 128, 128, 0.842);
+  background-color: rgba(0, 0, 0, 0.9);
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 2rem;
   transition: .2s ease-in-out;
+  z-index: 9999;
  }
+
+.video-container {
+  position: relative;
+  width: 100%;
+  max-width: 500px;
+  margin-top: 2rem;
+}
+
 video {
   width: 100%;
-  margin-top: 2rem;
-  max-width: 500px;
-  border: 2px solid #0f0;
   border-radius: 8px;
+  display: block;
 }
+
+/* Overlay oscuro con zona transparente */
+.scan-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+.scan-overlay::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 35%;
+  background: rgba(0, 0, 0, 0.6);
+}
+
+.scan-overlay::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 35%;
+  background: rgba(0, 0, 0, 0.6);
+}
+
+/* Zona de escaneo */
+.scan-area {
+  position: absolute;
+  top: 35%;
+  left: 10%;
+  width: 80%;
+  height: 30%;
+  border: 2px solid rgba(255, 255, 255, 0.5);
+  border-radius: 8px;
+  box-shadow: 0 0 0 9999px rgba(0, 0, 0, 0.6);
+}
+
+/* Línea roja de guía */
+.scan-line {
+  position: absolute;
+  top: 50%;
+  left: 10%;
+  width: 80%;
+  height: 3px;
+  background: linear-gradient(90deg, 
+    transparent 0%, 
+    #ff0000 20%, 
+    #ff0000 80%, 
+    transparent 100%);
+  box-shadow: 0 0 10px rgba(255, 0, 0, 0.8);
+  animation: scan-animation 2s ease-in-out infinite;
+  z-index: 10;
+}
+
+@keyframes scan-animation {
+  0%, 100% {
+    transform: translateY(-50%) scaleX(1);
+    opacity: 0.8;
+  }
+  50% {
+    transform: translateY(-50%) scaleX(0.95);
+    opacity: 1;
+  }
+}
+
+.resultado-scan {
+  margin-top: 15px;
+  font-size: 18px;
+  background: rgba(255, 255, 255, 0.1);
+  color: white;
+  padding: 15px 25px;
+  border-radius: 8px;
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.btn-scann {
+  padding: 15px 40px;
+  background: #ff4444;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.btn-scann:hover {
+  background: #cc0000;
+  transform: scale(1.05);
+}
+
+.btn-scann:active {
+  transform: scale(0.95);
+}
+
 #result {
   margin-top: 15px;
   font-size: 20px;
