@@ -36,9 +36,6 @@ const Login = ({
     <div
       className='contenedor-login'>
         <div className='aside-izq'>
-          <div className='contenedor-img'>
-            <img src='./img/logoKiosco.webp' alt="Logo" />
-          </div>
         </div>
         <div className='aside-der'>
           <div className='contenedor-form-login'>
