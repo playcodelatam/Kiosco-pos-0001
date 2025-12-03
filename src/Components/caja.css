@@ -127,9 +127,11 @@
     grid-template-columns: 1fr auto auto auto 39px; 
     align-items: center;
     padding: 13px;
-    border-bottom: 1px solid #eee;
+    border: 1px solid #00bcd4; /* Borde celeste */
+    border-radius: 4px;
+    margin-bottom: 8px;
     font-size: 18px;
-      position: relative;
+    position: relative;
 }
 
 .items-cobrar:nth-child(even) {
@@ -138,6 +140,7 @@
 
 .items-cobrar > div:first-child {
     font-weight: 500;
+    color: #007bff; /* Texto azul */
 }
 
 .items-cobrar .btn-cobrar {
@@ -150,17 +153,21 @@
 
 .items-cobrar .btn-cobrar .btn-items-caja {
     display: none;
-    background-color: var(--color-fondo-oscuro);
+    background-color: #00bcd4; /* Fondo celeste */
     border: none;
     padding: 7px;
     border-radius: 4px;
     cursor: pointer;
     line-height: 0;
-    
+    transition: all 0.3s ease;
+}
+
+.items-cobrar .btn-cobrar .btn-items-caja:hover {
+    background-color: #00acc1; /* Celeste más oscuro al hover */
 }
 
 .items-cobrar .btn-cobrar svg {
-    fill: var(--color-texto-claro);
+    fill: #007bff; /* Iconos azul */
 }
 
 .importe {
@@ -221,12 +228,12 @@
 }
 
 .mediopago {
-    padding: 12px; /* 10px + 20% = 12px */
+    padding: 8px; /* 10px - 20% = 8px */
     border-radius: 4px;
     border: none;
-    min-width: 187px; /* 156px + 20% = 187.2px ≈ 187px */
+    min-width: 125px; /* 156px - 20% = 124.8px ≈ 125px */
     text-align: center;
-    font-size: 19px; /* 16px + 20% = 19.2px ≈ 19px */
+    font-size: 13px; /* 16px - 20% = 12.8px ≈ 13px */
 }
 
 .cobrar-btn {
