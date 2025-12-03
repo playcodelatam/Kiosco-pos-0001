@@ -153,7 +153,7 @@
 
 .items-cobrar .btn-cobrar .btn-items-caja {
     display: none;
-    background-color: #00bcd4; /* Fondo celeste */
+    background-color: #007bff; /* Fondo azul */
     border: none;
     padding: 7px;
     border-radius: 4px;
@@ -163,11 +163,11 @@
 }
 
 .items-cobrar .btn-cobrar .btn-items-caja:hover {
-    background-color: #00acc1; /* Celeste más oscuro al hover */
+    background-color: #0056b3; /* Azul más oscuro al hover */
 }
 
 .items-cobrar .btn-cobrar svg {
-    fill: #007bff; /* Iconos azul */
+    fill: white; /* Iconos blancos */
 }
 
 .importe {
@@ -268,9 +268,19 @@ p[style*="textAlign:center"] {
     font-style: italic;
 }
 .btn-cobrar-menu {
-  background-color: #212529;
+  background-color: #007bff; /* Fondo azul */
   border: none;
   border-radius: 5px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.btn-cobrar-menu:hover {
+  background-color: #0056b3; /* Azul más oscuro al hover */
+}
+
+.btn-cobrar-menu svg {
+  fill: white; /* Iconos blancos */
 }
 
 @media (min-width: 800px) {
