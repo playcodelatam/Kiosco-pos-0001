@@ -40,7 +40,7 @@ export const inicializarAdmin = async () => {
     let adminUID = null;
     
     try {
-      const userCredential = await createUserWithEmailAndPassword(auth, 'admin@kiosko.com', 'pos1982*');
+      const userCredential = await createUserWithEmailAndPassword(auth, 'admin@pos.com', 'pos1982*');
       adminUID = userCredential.user.uid;
       await updateProfile(userCredential.user, { displayName: 'Administrador' });
       console.log('Usuario admin creado en Authentication');
@@ -49,7 +49,7 @@ export const inicializarAdmin = async () => {
         // El usuario ya existe, obtener su UID
         console.log('Usuario admin ya existe en Authentication');
         // Necesitamos hacer login temporal para obtener el UID
-        const tempLogin = await signInWithEmailAndPassword(auth, 'admin@kiosko.com', 'pos1982*');
+        const tempLogin = await signInWithEmailAndPassword(auth, 'admin@pos.com', 'pos1982*');
         adminUID = tempLogin.user.uid;
         await signOut(auth); // Cerrar sesión temporal
       } else {
@@ -127,7 +127,7 @@ export const loginConMail = async(dataUser) => {
     
     // Obtener el rol del usuario
     let rol = 'user';
-    if (dataUser.correo === 'admin@kiosko.com') {
+    if (dataUser.correo === 'admin@pos.com') {
       rol = 'admin';
     } else {
       const userDocRef = doc(db, 'kioscos', user.uid);

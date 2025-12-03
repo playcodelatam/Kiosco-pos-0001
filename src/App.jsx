@@ -44,7 +44,7 @@ useEffect(() => {
         setIdDoc(uid) // Guardo el id unico del usuario ya que va a ser el nombre del documento en firebase.
         
         // Determinar el rol del usuario
-        const rol = usuarioLogueado.email === 'admin@kiosko.com' ? 'admin' : 'user';
+        const rol = usuarioLogueado.email === 'admin@pos.com' ? 'admin' : 'user';
         setRolUsuario(rol);
         
         // Suscripción al Documento Completo
