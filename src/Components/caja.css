@@ -27,7 +27,7 @@
     flex-direction: column;
     min-height: 100vh; /* Ocupa toda la altura de la pantalla */
     padding: var(--padding-base);
-    background-color: var(--color-fondo-claro);
+    background-color: #faff74; /* Fondo amarillo */
     color: var(--color-texto-oscuro);
 }
 

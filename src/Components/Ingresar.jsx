@@ -121,7 +121,7 @@ const cargarProducto = (data) => {
 return (
     <div className='contenedor-ingresar'>
       <div className='titulo-ingresar'>
-        <h3>Ingrear Productos</h3>
+        <h3>Ingresar Productos</h3>
       </div>
       { 
         isOnCamara &&

@@ -4,8 +4,8 @@
   "description": "Sistema de Punto de Venta - Administración y Gestión",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#4DAAA7",
-  "theme_color": "#4DAAA7",
+  "background_color": "#faff74",
+  "theme_color": "#faff74",
   "orientation": "portrait-primary",
   "icons": [
     {
