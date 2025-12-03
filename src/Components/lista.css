@@ -3,6 +3,9 @@
   display: flex;
   flex-direction: column;
   align-items: center;
+  background-color: #faff74; /* Fondo amarillo */
+  min-height: 100vh;
+  padding-bottom: 20px;
 }
 .contenedor-lista h3 {
   margin-top: 1rem;
