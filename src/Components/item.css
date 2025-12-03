@@ -55,14 +55,14 @@ border: none;
 border-radius: 5px;
 transition: .3s ease-in-out;
 padding: 2px;
-background-color: #00bcd4; /* Fondo celeste */
+background-color: #007bff; /* Fondo azul */
 cursor: pointer;
 }
 .btn-item:hover {
-  background-color: #00acc1; /* Celeste más oscuro */
+  background-color: #0056b3; /* Azul más oscuro */
 }
 .btn-item svg {
-  fill: #007bff; /* Iconos azul */
+  fill: white; /* Iconos blancos */
 }
 .titulo-oculto {
   display: none;
@@ -134,7 +134,7 @@ cursor: pointer;
   justify-content: center;
   align-items: center;
   border: none;
-  background-color: #00bcd4; /* Fondo celeste */
+  background-color: #007bff; /* Fondo azul */
   color: white;
   border-radius: 5px;
   transition: .2s ease-in-out;
@@ -142,10 +142,10 @@ cursor: pointer;
   cursor: pointer;
   }
   .btn-item:hover {
-    background-color: #00acc1; /* Celeste más oscuro */
+    background-color: #0056b3; /* Azul más oscuro */
   }
   .btn-item svg {
-    fill: #007bff; /* Iconos azul */
+    fill: white; /* Iconos blancos */
   }
   .header-oculto {
   display: none;
